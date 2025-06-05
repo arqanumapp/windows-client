@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Arqanum (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Arqanum (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
