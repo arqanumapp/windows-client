@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36202.13 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arqanum", "Arqanum.csproj", "{1383654C-3013-4542-A206-6793CA7FE251}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArqanumCore", "..\..\ArqanumCore\ArqanumCore.csproj", "{217B447B-551A-6DC6-6A79-7E9677E09FB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -33,6 +35,18 @@ Global
 		{1383654C-3013-4542-A206-6793CA7FE251}.Release|x86.ActiveCfg = Release|x86
 		{1383654C-3013-4542-A206-6793CA7FE251}.Release|x86.Build.0 = Release|x86
 		{1383654C-3013-4542-A206-6793CA7FE251}.Release|x86.Deploy.0 = Release|x86
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|x64.Build.0 = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Debug|x86.Build.0 = Debug|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|ARM64.Build.0 = Release|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|x64.ActiveCfg = Release|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|x64.Build.0 = Release|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|x86.ActiveCfg = Release|Any CPU
+		{217B447B-551A-6DC6-6A79-7E9677E09FB6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

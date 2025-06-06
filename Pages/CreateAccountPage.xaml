@@ -1,0 +1,113 @@
+<Page
+    x:Class="Arqanum.Pages.CreateAccountPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Arqanum.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:utilities="using:Arqanum.Utilities"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <utilities:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Page.Resources>
+    <Grid Padding="40" RowDefinitions="Auto,*,Auto">
+
+        <Grid>
+            <Button Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Command="{Binding BackCommand}"
+                    Background="{ThemeResource ButtonBackground}"
+                    Foreground="{ThemeResource ButtonForeground}">
+                <FontIcon Glyph="&#xE72B;" FontFamily="Segoe MDL2 Assets" />
+            </Button>
+        </Grid>
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="300"
+                    Spacing="15">
+
+            <TextBlock Text="Create Account"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="{ThemeResource TextControlForeground}"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center" />
+
+            <Grid ColumnDefinitions="*,Auto" Height="40">
+                <TextBox x:Name="UsernameTextBox"
+                    PlaceholderText="Username"
+                    Grid.Column="0"
+                    Margin="0,0,10,0"
+                    Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    MaxLength="32"
+                    Background="{ThemeResource TextControlBackground}"
+                    Foreground="{ThemeResource TextControlForeground}" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="CheckButton"
+                        Content="Check"
+                        Command="{Binding CheckUsernameCommand}"
+                        Visibility="{Binding IsCheckButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Background="{ThemeResource ButtonBackground}"
+                        Foreground="{ThemeResource ButtonForeground}" />
+
+                    <ProgressRing Width="20"
+                        Height="20"
+                        IsActive="True"
+                        Visibility="{Binding IsSpinnerVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <FontIcon Glyph="&#xE001;" 
+                        FontSize="18"
+                            Foreground="Green"
+                            Visibility="{Binding IsSuccessIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <FontIcon Glyph="&#xE10A;"
+                            FontSize="18"
+                            Foreground="Red"
+                            Visibility="{Binding IsFailureIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+
+            </Grid>
+
+
+            <TextBlock Text="Only Latin letters and digits, max 32 characters"
+                       FontSize="10"
+                       Foreground="{ThemeResource SystemAccentColor}"
+                       TextWrapping="WrapWholeWords" />
+
+            <TextBox PlaceholderText="First name (optional)"
+                     Height="40"
+                     Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="32"
+                     Background="{ThemeResource TextControlBackground}"
+                     Foreground="{ThemeResource TextControlForeground}" />
+
+            <TextBox PlaceholderText="Last name (optional)"
+                     Height="40"
+                     Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="32"
+                     Background="{ThemeResource TextControlBackground}"
+                     Foreground="{ThemeResource TextControlForeground}" />
+
+            <Button Content="Continue"
+                Height="40"
+                HorizontalAlignment="Stretch"
+                Command="{Binding ContinueCommand}"
+                IsEnabled="{Binding CanContinue}"
+                Background="{ThemeResource SystemControlHighlightAccentBrush}"
+                Foreground="{ThemeResource ButtonForeground}" />
+
+            <TextBlock Text="{Binding StatusMessage}"
+                Margin="0,8,0,0"
+                TextWrapping="Wrap"
+                Foreground="Green"
+                FontSize="14"
+                HorizontalAlignment="Left" />
+        </StackPanel>
+    </Grid>
+</Page>

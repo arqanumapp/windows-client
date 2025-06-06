@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using Arqanum.CoreImplementations;
+using Arqanum.Pages;
+using Arqanum.ViewModels;
+using ArqanumCore;
+using ArqanumCore.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System;
 namespace Arqanum
 {
     public partial class App : Application
     {
+        public static IServiceProvider Services;
+        private IHost _host;
+
         private Window? _window;
 
         public App()
@@ -28,8 +23,29 @@ namespace Arqanum
 
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            _window = new MainWindow();
+            _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                services.AddTransient<IDbPasswordProvider, DbPasswordProvider>();
+                services.AddTransient<ICaptchaProvider, CaptchaProvider>();
+
+                services.AddArqanumCore();
+
+                services.AddTransient<WelcomePage>();
+
+                services.AddTransient<CreateAccountPage>();
+
+                services.AddTransient<CreateAccountViewModel>();
+
+                services.AddSingleton<MainWindow>();
+            })
+            .Build();
+
+            Services = _host.Services;
+            var mainWindow = Services.GetRequiredService<MainWindow>();
+            _window = mainWindow;
             _window.Activate();
         }
+
     }
 }
