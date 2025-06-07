@@ -1,5 +1,8 @@
+using Arqanum.CoreImplementations;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Threading.Tasks;
 
 namespace Arqanum.Pages
 {
@@ -14,8 +17,10 @@ namespace Arqanum.Pages
             Frame? rootFrame = this.Frame;
             rootFrame?.Navigate(typeof(CreateAccountPage));
         }
-        private void SignInButton_Click(object sender, RoutedEventArgs e)
+        private async void SignInButton_Click(object sender, RoutedEventArgs e)
         {
+            var captchaProvider = new CaptchaProvider();
+            string ss = await captchaProvider.GetCaptchaTokenAsync();
         }
     }
 }

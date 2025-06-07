@@ -9,6 +9,7 @@ namespace Arqanum
 {
     public sealed partial class MainWindow : Window
     {
+
         private IntPtr _hwnd;
         private IntPtr _prevWndProc;
         private WndProc _newWndProcDelegate;

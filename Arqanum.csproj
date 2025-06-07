@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Assets\Images\welcome-image.png" />
     <None Remove="Pages\CreateAccountPage.xaml" />
+    <None Remove="Windows\CaptchaWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Windows\CaptchaWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--

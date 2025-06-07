@@ -1,13 +1,17 @@
-﻿using ArqanumCore.Interfaces;
+﻿using Arqanum.Windows;
+using ArqanumCore.Interfaces;
 using System.Threading.Tasks;
 
 namespace Arqanum.CoreImplementations
 {
-    internal class CaptchaProvider : ICaptchaProvider
+    public class CaptchaProvider : ICaptchaProvider
     {
-        public Task<string> GetCaptchaTokenAsync()
+        public async Task<string> GetCaptchaTokenAsync()
         {
-            return Task.FromResult(string.Empty); // Placeholder implementation, replace with actual captcha logic
+            var captchaWindow = new CaptchaWindow();
+            captchaWindow.Activate();
+
+            return await captchaWindow.GetCaptchaTokenAsync();
         }
     }
 }
