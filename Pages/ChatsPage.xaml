@@ -1,0 +1,72 @@
+<Page
+    x:Class="Arqanum.Pages.ChatsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:ArqanumCore.ViewModels.Chat"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Chats" 
+                   FontSize="25" 
+                   FontWeight="Medium" 
+                   Margin="10,10,10,5" 
+                   HorizontalAlignment="Left"
+                   Grid.Row="0" />
+
+                <TextBox
+                    Margin="10,0,10,10"
+                    PlaceholderText="Search..."
+                    Background="{ThemeResource TextControlBackground}"
+                    Foreground="{ThemeResource TextControlForeground}"
+                    SelectionHighlightColor="{ThemeResource SystemControlHighlightAccentBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="1"
+                    Grid.Row="1" />
+
+                <ListView
+                    x:Name="ChatListView"
+                    SelectionChanged="ChatListView_SelectionChanged"
+                    ItemsSource="{x:Bind ViewModel.Chats, Mode=OneWay}"
+                    SelectedItem="{x:Bind ViewModel.SelectedChat, Mode=TwoWay}"
+                    Grid.Row="2">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ChatPreviewViewModel">
+                            <StackPanel Padding="5" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <Ellipse Width="40" Height="40" Stroke="Gray" StrokeThickness="1">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="https://cdn-icons-png.flaticon.com/512/149/149071.png" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+
+                                <StackPanel>
+                                    <TextBlock Text="{x:Bind ChatName}" FontWeight="Bold"/>
+                                    <TextBlock Text="{x:Bind LastMessage}" FontStyle="Italic" FontSize="12"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+
+                </ListView>
+            </Grid>
+
+        <Grid Grid.Column="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Frame x:Name="ChatContentControl" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" />
+        </Grid>
+
+    </Grid>
+</Page>

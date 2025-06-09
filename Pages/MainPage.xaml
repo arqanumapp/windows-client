@@ -1,0 +1,59 @@
+<Page
+    x:Class="Arqanum.Pages.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid x:Name="RootGrid">
+        <NavigationView x:Name="SideNavigation" IsPaneOpen="False"
+                        OpenPaneLength="145" IsBackButtonVisible="Collapsed" IsSettingsVisible="False" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" SelectionChanged="SideNavigation_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Tag="Account">
+                    <NavigationViewItem.ContentTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+                                <controls:PersonPicture ProfilePicture="{Binding AccountAvatarUrl}" HorizontalAlignment="Left" Width="25" Height="25" />
+                                <TextBlock Text="Account" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </NavigationViewItem.ContentTemplate>
+                </NavigationViewItem>
+
+                <NavigationViewItem Icon="Message" AnimatedIcon.State="Start" Content="Chats" Tag="Chat">
+                    <NavigationViewItem.InfoBadge>
+                        <InfoBadge x:Name="ChatBadge" Value="44" />
+                    </NavigationViewItem.InfoBadge>
+                </NavigationViewItem>
+                <NavigationViewItem Icon="People" Content="Contacts" Tag="Contacts">
+                    <NavigationViewItem.InfoBadge>
+                        <InfoBadge x:Name="ContactsBadge" Value="2" />
+                    </NavigationViewItem.InfoBadge>
+                </NavigationViewItem> 
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Tag="ThemeToggle">
+                    <NavigationViewItem.Icon>
+                        <FontIcon x:Name="ThemeIcon" Glyph="&#xE771;" FontFamily="Segoe MDL2 Assets"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="Settings" Tag="Settings">
+                    <NavigationViewItem.Icon>
+                        <AnimatedIcon x:Name="AnimatedIcon">
+                            <AnimatedIcon.Source>
+                                <animatedvisuals:AnimatedSettingsVisualSource/>
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <FontIconSource Glyph="&#xE713;"/>
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
+            <Frame x:Name="ContentFrame"/>
+        </NavigationView>
+    </Grid>
+</Page>

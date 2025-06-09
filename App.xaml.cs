@@ -9,15 +9,18 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
+using Windows.Storage;
 namespace Arqanum
 {
     public partial class App : Application
     {
+        private const string ThemeSettingKey = "AppTheme";
+
         public static IServiceProvider Services;
 
         private IHost _host;
 
-        private Window? _window;
+        public static Window Window;
 
         private Mutex _appMutex;
 
@@ -34,7 +37,15 @@ namespace Arqanum
             }
             InitializeComponent();
         }
-
+        private void RestoreTheme()
+        {
+            if (Window.Content is FrameworkElement root &&
+                ApplicationData.Current.LocalSettings.Values.TryGetValue(ThemeSettingKey, out object savedTheme) &&
+                Enum.TryParse(savedTheme.ToString(), out ElementTheme theme))
+            {
+                root.RequestedTheme = theme;
+            }
+        }
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _host = Host.CreateDefaultBuilder()
@@ -60,9 +71,11 @@ namespace Arqanum
             Services = _host.Services;
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
+            mainWindow.ExtendsContentIntoTitleBar = true;
 
-            _window = mainWindow;
-            _window.Activate();
+            Window = mainWindow;
+            Window.Activate();
+            RestoreTheme();
         }
 
     }

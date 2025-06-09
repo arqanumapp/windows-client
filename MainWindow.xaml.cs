@@ -1,31 +1,55 @@
 using Arqanum.Pages;
+using ArqanumCore.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Storage;
 using WinRT.Interop;
 
 namespace Arqanum
 {
     public sealed partial class MainWindow : Window
     {
-
+        private readonly AccountService _accountService;
         private IntPtr _hwnd;
         private IntPtr _prevWndProc;
         private WndProc _newWndProcDelegate;
+        private bool _isLoaded = false;
 
-        public MainWindow()
+        private const string ThemeSettingKey = "AppTheme";
+
+        public MainWindow(AccountService accountService)
         {
             InitializeComponent();
-
-            MainFrame.Navigate(typeof(WelcomePage), null, new DrillInNavigationTransitionInfo());
-
             _hwnd = WindowNative.GetWindowHandle(this);
 
             _newWndProcDelegate = WindowProc;
 
             _prevWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate));
+            _accountService = accountService;
+            this.Activated += MainWindow_Activated;
         }
+       
+        private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (!_isLoaded)
+            {
+                _isLoaded = true;
+
+                var accountExist = await _accountService.AccountExist();
+
+                if(accountExist)
+                {
+                    MainFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
+                }
+                else
+                {
+                    MainFrame.Navigate(typeof(WelcomePage), null, new DrillInNavigationTransitionInfo());
+                }
+            }
+        }
+
 
         private delegate IntPtr WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
