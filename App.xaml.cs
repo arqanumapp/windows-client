@@ -6,6 +6,7 @@ using ArqanumCore;
 using ArqanumCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
@@ -71,7 +72,6 @@ namespace Arqanum
             Services = _host.Services;
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
-            mainWindow.ExtendsContentIntoTitleBar = true;
 
             Window = mainWindow;
             Window.Activate();

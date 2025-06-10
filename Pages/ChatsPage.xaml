@@ -20,22 +20,26 @@
 
                 <TextBlock Text="Chats" 
                    FontSize="25" 
-                   FontWeight="Medium" 
+                   FontWeight="Thin" 
                    Margin="10,10,10,5" 
                    HorizontalAlignment="Left"
                    Grid.Row="0" />
 
-                <TextBox
-                    Margin="10,0,10,10"
-                    PlaceholderText="Search..."
-                    Background="{ThemeResource TextControlBackground}"
-                    Foreground="{ThemeResource TextControlForeground}"
-                    SelectionHighlightColor="{ThemeResource SystemControlHighlightAccentBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    BorderThickness="1"
-                    Grid.Row="1" />
+            <AutoSuggestBox
+                x:Name="SearchBox"
+                Grid.Row="1"
+                Margin="10,0,10,10"
+                PlaceholderText="Search..."
+                QueryIcon="Find"
+                AutomationProperties.Name="Search"
+                Background="{ThemeResource TextControlBackground}"
+                Foreground="{ThemeResource TextControlForeground}"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                TextChanged="SearchBox_TextChanged"/>
 
-                <ListView
+
+            <ListView
                     x:Name="ChatListView"
                     SelectionChanged="ChatListView_SelectionChanged"
                     ItemsSource="{x:Bind ViewModel.Chats, Mode=OneWay}"

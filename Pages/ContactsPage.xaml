@@ -8,13 +8,275 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
     <Grid>
-        <TextBlock Text="Contacts" 
-            FontSize="25" 
-            FontWeight="Medium" 
-            Margin="10,10,10,5" 
-            HorizontalAlignment="Left"
-            Grid.Row="0" />
-    </Grid>
+        <StackPanel Orientation="Horizontal" Margin="10,10,10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Spacing="8">
+            <TextBlock Text="Contacts" 
+                   FontSize="25" 
+                   FontWeight="Thin" 
+                   VerticalAlignment="Center"/>
+            <Button Width="36" Height="36" VerticalAlignment="Center" ToolTipService.ToolTip="Add new contact" Padding="0">
+                <TextBlock FontFamily="Segoe MDL2 Assets" 
+                       Text="&#xE8FA;" 
+                       FontSize="17" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"/>
+            </Button>
+        </StackPanel>
+
+        <Pivot Margin="0,50,0,0">
+        <PivotItem>
+                <PivotItem.Header>
+                    <StackPanel>
+                        <TextBlock Text="Contacts" FontSize="16" />
+                    </StackPanel>
+                </PivotItem.Header>
+                <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="350"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="ContactsSearchBox"
+                            Grid.Row="0"
+                            Margin="5,10,5,10"
+                            PlaceholderText="Search..."
+                            QueryIcon="Find"
+                            AutomationProperties.Name="ContactsSearch"
+                            Background="{ThemeResource TextControlBackground}"
+                            Foreground="{ThemeResource TextControlForeground}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"/>
+
+                        <ListView Grid.Row="1"  Margin="0">
+                            <ListViewItem Content="Contact 1" />
+                            <ListViewItem Content="Contact 2" />
+                            <ListViewItem Content="Contact 3" />
+                        </ListView>
+                    </Grid>
+
+                    
+
+                        <StackPanel  Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                            <TextBlock 
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="40"
+                                    Text="&#xE716;"
+
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+
+            <TextBlock Text="Contacts"
+                   TextWrapping="Wrap"
+                   FontSize="25"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+
+        <TextBlock Text="List of all your contacts"
+                   TextWrapping="Wrap"
+                   FontSize="15"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+    </StackPanel>
+
+
+                </Grid>
+        </PivotItem>
+
+        <PivotItem>
+                <PivotItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+                        <TextBlock Text="Incoming" FontSize="16" VerticalAlignment="Center" />
+                        <InfoBadge x:Name="infoBadge3" Style="{StaticResource AttentionValueInfoBadgeStyle}" Value="2" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                </PivotItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="IncomingSearchBox"
+                            Grid.Row="0"
+                            Margin="5,10,5,10"
+                            PlaceholderText="Search..."
+                            QueryIcon="Find"
+                            AutomationProperties.Name="IncomingSearch"
+                            Background="{ThemeResource TextControlBackground}"
+                            Foreground="{ThemeResource TextControlForeground}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"/>
+
+                        <ListView Grid.Row="1"  Margin="0">
+                            <ListViewItem Content="Contact 1" />
+                            <ListViewItem Content="Contact 2" />
+                            <ListViewItem Content="Contact 3" />
+                        </ListView>
+                    </Grid>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                        <TextBlock 
+        FontFamily="Segoe MDL2 Assets"
+        FontSize="40"
+        Text="&#xE8FA;" 
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+
+    <TextBlock Text="Incoming"
+               TextWrapping="Wrap"
+               FontSize="25"
+               TextAlignment="Center"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
+
+    <TextBlock Text="Requests from other users to add you to their contacts"
+               TextWrapping="Wrap"
+               FontSize="15"
+               TextAlignment="Center"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
+</StackPanel>
+
+                </Grid>
+            </PivotItem>
+
+        <PivotItem>
+                <PivotItem.Header>
+                    <StackPanel>
+                        <TextBlock Text="Outgoing" FontSize="16" />
+                    </StackPanel>
+                </PivotItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="OutgoingSearchBox"
+                            Grid.Row="0"
+                            Margin="5,10,5,10"
+                            PlaceholderText="Search..."
+                            QueryIcon="Find"
+                            AutomationProperties.Name="OutgoingSearch"
+                            Background="{ThemeResource TextControlBackground}"
+                            Foreground="{ThemeResource TextControlForeground}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"/>
+
+                        <ListView Grid.Row="1"  Margin="0">
+                            <ListViewItem Content="Contact 1" />
+                            <ListViewItem Content="Contact 2" />
+                            <ListViewItem Content="Contact 3" />
+                        </ListView>
+                    </Grid>
+                    
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                        <TextBlock 
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="40"
+                            Text="&#xE8FA;" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+
+                        <TextBlock Text="Outgoing"
+                            TextWrapping="Wrap"
+                            FontSize="25"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+
+                        <TextBlock Text="Your requests to other users"
+                            TextWrapping="Wrap"
+                            FontSize="15"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </PivotItem>
+        <PivotItem>
+                <PivotItem.Header>
+                    <StackPanel>
+                        <TextBlock Text="Blacklist" FontSize="16" />
+                    </StackPanel>
+                </PivotItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="BlacklistSearchBox"
+                            Grid.Row="0"
+                            Margin="5,10,5,10"
+                            PlaceholderText="Search..."
+                            QueryIcon="Find"
+                            AutomationProperties.Name="BlacklistSearch"
+                            Background="{ThemeResource TextControlBackground}"
+                            Foreground="{ThemeResource TextControlForeground}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"/>
+
+                        <ListView Grid.Row="1"  Margin="0">
+                            <ListViewItem Content="Contact 1" />
+                            <ListViewItem Content="Contact 2" />
+                            <ListViewItem Content="Contact 3" />
+                        </ListView>
+                    </Grid>
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                        <TextBlock 
+        FontFamily="Segoe MDL2 Assets"
+        FontSize="40"
+        Text="&#xE8F8;" 
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+
+                        <TextBlock Text="Blacklist"
+        TextWrapping="Wrap"
+        FontSize="25"
+        TextAlignment="Center"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"/>
+
+                        <TextBlock Text="These users will not know that he is on the blacklist and you will not receive messages from them"
+        TextWrapping="Wrap"
+        FontSize="15"
+        TextAlignment="Center"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </PivotItem>
+    </Pivot>
+        </Grid>
 </Page>
