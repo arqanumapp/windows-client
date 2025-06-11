@@ -1,10 +1,17 @@
 using Arqanum.Pages;
+using Arqanum.Services;
 using ArqanumCore.Services;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 namespace Arqanum
@@ -19,18 +26,104 @@ namespace Arqanum
 
         private const string ThemeSettingKey = "AppTheme";
 
+        public void ShowImagePopup(BitmapImage image)
+        {
+            PopupImage.Source = image;
+
+            PopupRoot.Width = RootGrid.ActualWidth;
+            PopupRoot.Height = RootGrid.ActualHeight;
+
+            ImagePopup.IsOpen = true;
+        }
+
+        private void ImagePopupGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ImagePopup.IsOpen = false;
+            PopupImage.Source = null;
+        }
         public MainWindow(AccountService accountService)
         {
             InitializeComponent();
+
             _hwnd = WindowNative.GetWindowHandle(this);
 
             _newWndProcDelegate = WindowProc;
 
             _prevWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate));
+
             _accountService = accountService;
+
             this.Activated += MainWindow_Activated;
+
+            ImagePreviewService.Initialize(this);
+
+            this.SizeChanged += MainWindow_SizeChanged;
+
+            RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
         }
-       
+        private async void SaveImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var savePicker = new FileSavePicker();
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hwnd);
+
+            savePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            savePicker.FileTypeChoices.Add("PNG Image", new[] { ".png" });
+            savePicker.SuggestedFileName = "image";
+
+            var file = await savePicker.PickSaveFileAsync();
+            if (file == null)
+                return;
+
+            var renderTargetBitmap = new RenderTargetBitmap();
+            await renderTargetBitmap.RenderAsync(PopupImage);
+
+            var pixelBuffer = await renderTargetBitmap.GetPixelsAsync();
+
+            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var encoder = await BitmapEncoder.CreateAsync(
+                    BitmapEncoder.PngEncoderId, stream);
+
+                encoder.SetPixelData(
+                    BitmapPixelFormat.Bgra8,
+                    BitmapAlphaMode.Premultiplied,
+                    (uint)renderTargetBitmap.PixelWidth,
+                    (uint)renderTargetBitmap.PixelHeight,
+                    96, 96,
+                    pixelBuffer.ToArray());
+
+                await encoder.FlushAsync();
+            }
+        }
+
+
+        private bool _pendingPopupResize = false;
+
+        private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            if (ImagePopup.IsOpen)
+            {
+                _pendingPopupResize = true;
+            }
+        }
+
+        private void RootGrid_LayoutUpdated(object? sender, object e)
+        {
+            if (_pendingPopupResize && ImagePopup.IsOpen)
+            {
+                PopupRoot.Width = RootGrid.ActualWidth;
+                PopupRoot.Height = RootGrid.ActualHeight;
+                _pendingPopupResize = false;
+            }
+        }
+
+
+        private void CloseImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            ImagePopup.IsOpen = false;
+            PopupImage.Source = null;
+        }
         private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (!_isLoaded)

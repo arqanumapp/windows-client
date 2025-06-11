@@ -1,10 +1,14 @@
 using Arqanum.Controls;
+using Arqanum.Services;
 using Arqanum.ViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 
 namespace Arqanum.Pages
 {
@@ -40,7 +44,7 @@ namespace Arqanum.Pages
                 }
             };
         }
-
+       
 
         private void ApplyTheme(ElementTheme theme)
         {

@@ -1,4 +1,5 @@
-﻿using ArqanumCore.Services;
+﻿using Arqanum.Services;
+using ArqanumCore.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -6,12 +7,12 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Arqanum.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private ThemeService _themeService;
 
         private AccountService _accountService;
 
@@ -52,7 +53,6 @@ namespace Arqanum.ViewModels
             try
             {
                 _accountService = App.Services.GetRequiredService<AccountService>();
-
                 var url = await _accountService.GetAccountAvatarUrl();
                 AccountAvatarUrl = url;
             }
@@ -105,44 +105,19 @@ namespace Arqanum.ViewModels
 
         public MainViewModel()
         {
-            LoadTheme();
+            _themeService = App.Services.GetRequiredService<ThemeService>();
+
+            _themeService.ThemeChanged += theme => ThemeChanged?.Invoke(theme);
+
+            ThemeChanged?.Invoke(_themeService.CurrentTheme);
         }
-
-        private void ToggleTheme()
-        {
-            var currentTheme = GetCurrentTheme();
-            var newTheme = currentTheme switch
-            {
-                ElementTheme.Dark => ElementTheme.Light,
-                ElementTheme.Light => ElementTheme.Dark,
-                _ => ElementTheme.Dark
-            };
-
-            SaveTheme(newTheme);
-            ThemeChanged?.Invoke(newTheme);
-        }
-
         public ElementTheme GetCurrentTheme()
         {
-            var saved = ApplicationData.Current.LocalSettings.Values[ThemeSettingKey] as string;
-
-            if (Enum.TryParse<ElementTheme>(saved, out var theme))
-            {
-                return theme;
-            }
-
-            return ElementTheme.Dark;
+            return _themeService.CurrentTheme;
         }
-
-        private void SaveTheme(ElementTheme theme)
+        private void ToggleTheme()
         {
-            ApplicationData.Current.LocalSettings.Values[ThemeSettingKey] = theme.ToString();
-        }
-
-        private void LoadTheme()
-        {
-            var theme = GetCurrentTheme();
-            ThemeChanged?.Invoke(theme);
+            _themeService.ToggleTheme();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

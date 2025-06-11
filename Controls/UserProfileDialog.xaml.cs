@@ -1,8 +1,10 @@
+using Arqanum.Services;
 using Arqanum.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -82,7 +84,10 @@ public sealed partial class UserProfileDialog : UserControl
     {
         CloseDialog();
     }
-
+    private void Avatar_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        ImagePreviewService.Show(_viewModel.AvatarUrl);
+    }
     private void CloseDialog()
     {
         var fadeOut = new DoubleAnimation { To = 0.0, Duration = TimeSpan.FromMilliseconds(200) };

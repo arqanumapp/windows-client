@@ -14,7 +14,7 @@
                    FontSize="25" 
                    FontWeight="Thin" 
                    VerticalAlignment="Center"/>
-            <Button Width="36" Height="36" VerticalAlignment="Center" ToolTipService.ToolTip="Add new contact" Padding="0">
+            <Button Width="36" Height="36" VerticalAlignment="Center" Click="AddNewContactButton_Click" ToolTipService.ToolTip="Add new contact" Padding="0">
                 <TextBlock FontFamily="Segoe MDL2 Assets" 
                        Text="&#xE8FA;" 
                        FontSize="17" 

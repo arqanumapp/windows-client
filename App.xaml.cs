@@ -1,21 +1,19 @@
 ﻿using Arqanum.CoreImplementations;
 using Arqanum.Pages;
+using Arqanum.Services;
 using Arqanum.ViewModels;
 using Arqanum.Windows;
 using ArqanumCore;
 using ArqanumCore.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
-using Windows.Storage;
 namespace Arqanum
 {
     public partial class App : Application
     {
-        private const string ThemeSettingKey = "AppTheme";
 
         public static IServiceProvider Services;
 
@@ -38,15 +36,7 @@ namespace Arqanum
             }
             InitializeComponent();
         }
-        private void RestoreTheme()
-        {
-            if (Window.Content is FrameworkElement root &&
-                ApplicationData.Current.LocalSettings.Values.TryGetValue(ThemeSettingKey, out object savedTheme) &&
-                Enum.TryParse(savedTheme.ToString(), out ElementTheme theme))
-            {
-                root.RequestedTheme = theme;
-            }
-        }
+
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _host = Host.CreateDefaultBuilder()
@@ -58,11 +48,14 @@ namespace Arqanum
 
                 services.AddArqanumCore();
 
+                services.AddSingleton<ThemeService>();
+
                 services.AddTransient<WelcomePage>();
 
                 services.AddTransient<CreateAccountPage>();
 
                 services.AddTransient<CreateAccountViewModel>();
+
                 services.AddTransient<CaptchaWindow>();
 
                 services.AddSingleton<MainWindow>();
@@ -72,10 +65,11 @@ namespace Arqanum
             Services = _host.Services;
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
+            var themeService = Services.GetRequiredService<ThemeService>();
 
             Window = mainWindow;
             Window.Activate();
-            RestoreTheme();
+            themeService.RestoreTheme();
         }
 
     }

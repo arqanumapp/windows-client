@@ -1,23 +1,49 @@
-<winui:Window
+﻿<winui:Window
     x:Class="Arqanum.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Arqanum"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
     xmlns:winui="using:Microsoft.UI.Xaml"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:interop="using:Microsoft.UI.Xaml.Hosting"
     Title="Arqanum Messenger">
 
-    <winui:Window.SystemBackdrop>
-        <MicaBackdrop />
-    </winui:Window.SystemBackdrop>
+    <Grid x:Name="RootGrid">
 
-    <Grid>
         <Frame x:Name="MainFrame"
                HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch" />
+
+        <Popup x:Name="ImagePopup"
+               IsOpen="False"
+               IsLightDismissEnabled="False">
+
+            <Grid Background="#CC000000" x:Name="PopupRoot">
+                <Image x:Name="PopupImage"
+                    Stretch="Uniform"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MaxWidth="800"
+                    MaxHeight="800"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" Spacing="8">
+                    <Button Width="40" Height="40"
+                        Click="SaveImageButton_Click"
+                        Background="#66000000"
+                        BorderThickness="0"
+                        CornerRadius="20"
+                        ToolTipService.ToolTip="Save image">
+                        <FontIcon Glyph="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White"/>
+                    </Button>
+
+                    <Button Width="40" Height="40"
+                        Click="CloseImageButton_Click"
+                        Background="#66000000"
+                        BorderThickness="0"
+                        CornerRadius="20"
+                        ToolTipService.ToolTip="Close">
+                        <FontIcon Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+        </Popup>
     </Grid>
 </winui:Window>

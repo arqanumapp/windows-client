@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Assets\Images\logo.png" />
     <None Remove="Assets\Images\welcome-image.png" />
+    <None Remove="Controls\AddContactDialog.xaml" />
     <None Remove="Controls\UserProfileDialog.xaml" />
     <None Remove="Pages\ChatsPage.xaml" />
     <None Remove="Pages\ContactsPage.xaml" />
@@ -69,7 +70,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Page Update="Controls\AddContactDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\UserProfileDialog.xaml">
