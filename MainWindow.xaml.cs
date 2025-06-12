@@ -2,16 +2,23 @@ using Arqanum.Pages;
 using Arqanum.Services;
 using ArqanumCore.Services;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
+using Windows.Media.Capture;
+using Windows.Media.Capture.Frames;
+using Windows.Media.Core;
+using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using WinRT.Interop;
 
 namespace Arqanum
@@ -19,28 +26,7 @@ namespace Arqanum
     public sealed partial class MainWindow : Window
     {
         private readonly AccountService _accountService;
-        private IntPtr _hwnd;
-        private IntPtr _prevWndProc;
-        private WndProc _newWndProcDelegate;
-        private bool _isLoaded = false;
 
-        private const string ThemeSettingKey = "AppTheme";
-
-        public void ShowImagePopup(BitmapImage image)
-        {
-            PopupImage.Source = image;
-
-            PopupRoot.Width = RootGrid.ActualWidth;
-            PopupRoot.Height = RootGrid.ActualHeight;
-
-            ImagePopup.IsOpen = true;
-        }
-
-        private void ImagePopupGrid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            ImagePopup.IsOpen = false;
-            PopupImage.Source = null;
-        }
         public MainWindow(AccountService accountService)
         {
             InitializeComponent();
@@ -57,10 +43,111 @@ namespace Arqanum
 
             ImagePreviewService.Initialize(this);
 
+            CameraService.Initialize(this);
+
             this.SizeChanged += MainWindow_SizeChanged;
 
             RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
         }
+
+        #region Camera Popup
+
+        private bool _pendingCameraPopupResize = false;
+
+        private MediaFrameSourceGroup mediaFrameSourceGroup;
+
+        private MediaCapture mediaCapture;
+
+        private bool _isMirrored = false;
+
+        public async void OpenCameraPopup()
+        {
+            var groups = await MediaFrameSourceGroup.FindAllAsync();
+
+            foreach (var group in groups)
+            {
+                var colorSourceInfo = group.SourceInfos.FirstOrDefault(s => s.SourceKind == MediaFrameSourceKind.Color);
+                if (colorSourceInfo != null)
+                {
+                    mediaFrameSourceGroup = group;
+                    break;
+                }
+            }
+            mediaCapture = new MediaCapture();
+
+            var mediaCaptureInitializationSettings = new MediaCaptureInitializationSettings()
+            {
+                SourceGroup = this.mediaFrameSourceGroup,
+                SharingMode = MediaCaptureSharingMode.SharedReadOnly,
+                StreamingCaptureMode = StreamingCaptureMode.Video,
+                MemoryPreference = MediaCaptureMemoryPreference.Cpu
+            };
+            await mediaCapture.InitializeAsync(mediaCaptureInitializationSettings);
+
+            var frameSource = mediaCapture.FrameSources[this.mediaFrameSourceGroup.SourceInfos[0].Id];
+            PopupPhotoCameraElement.Source = MediaSource.CreateFromMediaFrameSource(frameSource);
+
+
+            if (_isMirrored)
+            {
+                PopupPhotoCameraElement.RenderTransform = new ScaleTransform() { ScaleX = -1 };
+                PopupPhotoCameraElement.RenderTransformOrigin = new Point(0.5, 0.5);
+            }
+            else
+            {
+                PopupPhotoCameraElement.RenderTransform = new ScaleTransform() { ScaleX = 1 };
+                PopupPhotoCameraElement.RenderTransformOrigin = new Point(0.5, 0.5);
+            }
+
+            CameraPopupRoot.Width = RootGrid.ActualWidth;
+            CameraPopupRoot.Height = RootGrid.ActualHeight;
+            CameraPopup.IsOpen = true;
+
+        }
+
+        private void ToggleMirrorButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isMirrored = !_isMirrored;
+            OpenCameraPopup();
+        }
+
+        async private void TakePhotoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Capture a photo to a stream
+            var imgFormat = ImageEncodingProperties.CreateJpeg();
+            var stream = new InMemoryRandomAccessStream();
+            await mediaCapture.CapturePhotoToStreamAsync(imgFormat, stream);
+            stream.Seek(0);
+
+            // Show the photo in an Image element
+            BitmapImage bmpImage = new BitmapImage();
+            await bmpImage.SetSourceAsync(stream);
+            var image = new Image() { Source = bmpImage };
+        }
+
+        private void CloseCameraPopupButton_Click(object sender, RoutedEventArgs e)
+        {
+            CameraPopup.IsOpen = false;
+            mediaCapture.Dispose();
+            mediaFrameSourceGroup = null;
+        }
+
+        #endregion
+
+        #region Image Popup
+
+        private bool _pendingImagePreviewPopupResize = false;
+
+        public void ShowImagePopup(BitmapImage image)
+        {
+            PopupImage.Source = image;
+
+            ImagePreviewPopupRoot.Width = RootGrid.ActualWidth;
+            ImagePreviewPopupRoot.Height = RootGrid.ActualHeight;
+
+            ImagePreviewPopup.IsOpen = true;
+        }
+
         private async void SaveImageButton_Click(object sender, RoutedEventArgs e)
         {
             var savePicker = new FileSavePicker();
@@ -97,33 +184,47 @@ namespace Arqanum
             }
         }
 
-
-        private bool _pendingPopupResize = false;
-
-        private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        private void CloseImagePreviewButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ImagePopup.IsOpen)
-            {
-                _pendingPopupResize = true;
-            }
+            ImagePreviewPopup.IsOpen = false;
+            PopupImage.Source = null;
         }
+
+        #endregion
+
+        #region Popup Resize Handling
 
         private void RootGrid_LayoutUpdated(object? sender, object e)
         {
-            if (_pendingPopupResize && ImagePopup.IsOpen)
+            if (_pendingImagePreviewPopupResize && ImagePreviewPopup.IsOpen)
             {
-                PopupRoot.Width = RootGrid.ActualWidth;
-                PopupRoot.Height = RootGrid.ActualHeight;
-                _pendingPopupResize = false;
+                ImagePreviewPopupRoot.Width = RootGrid.ActualWidth;
+                ImagePreviewPopupRoot.Height = RootGrid.ActualHeight;
+                _pendingImagePreviewPopupResize = false;
+            }
+
+            if (_pendingCameraPopupResize && CameraPopup.IsOpen)
+            {
+                CameraPopupRoot.Width = RootGrid.ActualWidth;
+                CameraPopupRoot.Height = RootGrid.ActualHeight;
+                _pendingCameraPopupResize = false;
+            }
+
+        }
+        private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            if (ImagePreviewPopup.IsOpen)
+            {
+                _pendingImagePreviewPopupResize = true;
+            }
+            if (CameraPopup.IsOpen)
+            {
+                _pendingCameraPopupResize = true;
             }
         }
 
+        #endregion
 
-        private void CloseImageButton_Click(object sender, RoutedEventArgs e)
-        {
-            ImagePopup.IsOpen = false;
-            PopupImage.Source = null;
-        }
         private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (!_isLoaded)
@@ -132,7 +233,7 @@ namespace Arqanum
 
                 var accountExist = await _accountService.AccountExist();
 
-                if(accountExist)
+                if (accountExist)
                 {
                     MainFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
                 }
@@ -143,6 +244,12 @@ namespace Arqanum
             }
         }
 
+        #region Window Resize Handling
+
+        private IntPtr _hwnd;
+        private IntPtr _prevWndProc;
+        private WndProc _newWndProcDelegate;
+        private bool _isLoaded = false;
 
         private delegate IntPtr WndProc(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
@@ -184,5 +291,6 @@ namespace Arqanum
 
         [DllImport("user32.dll", EntryPoint = "CallWindowProcW")]
         private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        #endregion
     }
 }

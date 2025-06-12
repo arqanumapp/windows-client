@@ -12,6 +12,8 @@ public class UserProfileViewModel : INotifyPropertyChanged
 
     private string _avatarUrl = string.Empty;
     private string _fullName = string.Empty;
+    private string _firstName = string.Empty;
+    private string _lastName = string.Empty;
     private string _username = string.Empty;
     private string _bio = string.Empty;
     private string _userId = string.Empty;
@@ -26,6 +28,18 @@ public class UserProfileViewModel : INotifyPropertyChanged
     {
         get => _fullName;
         set => SetField(ref _fullName, value);
+    }
+
+    public string LastName
+    {
+        get => _lastName;
+        set => SetField(ref _lastName, value);
+    }
+
+    public string FirstName
+    {
+        get => _firstName;
+        set => SetField(ref _firstName, value);
     }
 
     public string Username
@@ -58,6 +72,8 @@ public class UserProfileViewModel : INotifyPropertyChanged
             AvatarUrl = userData.AvatarUrl;
             FullName = userData.FirstName + " " + userData.LastName;
             Username = userData.Username;
+            FirstName = userData.FirstName ?? string.Empty;
+            LastName = userData.LastName ?? string.Empty;
             Bio = userData.Bio;
         }
     }

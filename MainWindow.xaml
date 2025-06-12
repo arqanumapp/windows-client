@@ -11,18 +11,24 @@
                HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch" />
 
-        <Popup x:Name="ImagePopup"
+        <Popup x:Name="ImagePreviewPopup"
                IsOpen="False"
                IsLightDismissEnabled="False">
 
-            <Grid Background="#CC000000" x:Name="PopupRoot">
-                <Image x:Name="PopupImage"
-                    Stretch="Uniform"
+            <Grid Background="#CC000000" x:Name="ImagePreviewPopupRoot">
+                
+                <ScrollView ContentOrientation="None"
+                    ZoomMode="Enabled" 
+                    IsTabStop="True"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    MaxWidth="800"
-                    MaxHeight="800"/>
-
+                    HorizontalScrollMode="Enabled" 
+                    HorizontalScrollBarVisibility="Hidden"
+                    VerticalScrollMode="Enabled" 
+                    VerticalScrollBarVisibility="Hidden">
+                    <Image x:Name="PopupImage" Stretch="Uniform"/>
+                   
+                </ScrollView>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" Spacing="8">
                     <Button Width="40" Height="40"
                         Click="SaveImageButton_Click"
@@ -34,7 +40,7 @@
                     </Button>
 
                     <Button Width="40" Height="40"
-                        Click="CloseImageButton_Click"
+                        Click="CloseImagePreviewButton_Click"
                         Background="#66000000"
                         BorderThickness="0"
                         CornerRadius="20"
@@ -45,5 +51,69 @@
             </Grid>
 
         </Popup>
+
+        <Popup x:Name="CameraPopup" IsOpen="False" IsLightDismissEnabled="False">
+            <Grid Background="#CC000000" x:Name="CameraPopupRoot">
+
+                    <MediaPlayerElement x:Name="PopupPhotoCameraElement"
+                        Stretch="Uniform"
+                        AutoPlay="True"/>
+
+                <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="16"
+                    Spacing="8">
+                    <Button Width="40" Height="40"
+                        Click="CloseCameraPopupButton_Click"
+                        Background="#66000000"
+                        BorderThickness="0"
+                        CornerRadius="20"
+                        ToolTipService.ToolTip="Close">
+                        
+                        <FontIcon Glyph="&#xE711;"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="18"
+                            Foreground="White" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,24"
+                    Spacing="16">
+
+                    <Button Width="60" Height="60"
+                        Click="TakePhotoButton_Click"
+                        Background="#66000000"
+                        BorderThickness="0"
+                        CornerRadius="30"
+                        ToolTipService.ToolTip="Take photo">
+                        <FontIcon Glyph="&#xE722;"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="24"
+                            Foreground="White" />
+                    </Button>
+
+                    <Button Width="40" Height="40"
+                        Click="ToggleMirrorButton_Click"
+                        Background="#66000000"
+                        BorderThickness="0"
+                        CornerRadius="20"
+                        ToolTipService.ToolTip="Toggle mirror">
+                        <FontIcon Glyph="&#xE7A7;"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="18"
+                            Foreground="White"/>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+        </Popup>
+
+
+
     </Grid>
 </winui:Window>

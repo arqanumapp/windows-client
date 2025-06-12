@@ -23,7 +23,7 @@ namespace Arqanum.Pages
                 XamlRoot = this.XamlRoot,
                 Content = new AddContactDialog(),
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                RequestedTheme = theme // <- ÂÀÆÍÎ: ñþäà
+                RequestedTheme = theme 
             };
 
             var result = await dialog.ShowAsync();

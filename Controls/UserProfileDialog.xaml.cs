@@ -1,4 +1,5 @@
 using Arqanum.Services;
+using Arqanum.Utilities;
 using Arqanum.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -6,7 +7,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.IO;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace Arqanum.Controls;
 
@@ -32,27 +37,7 @@ public sealed partial class UserProfileDialog : UserControl
 
     private async void UserProfileDialog_Loaded(object sender, RoutedEventArgs e)
     {
-        await _viewModel.LoadAsync();
-
-        var fadeIn = new DoubleAnimation { To = 0.5, Duration = TimeSpan.FromMilliseconds(200) };
-        var scaleX = new DoubleAnimation { To = 1.0, Duration = TimeSpan.FromMilliseconds(200) };
-        var scaleY = new DoubleAnimation { To = 1.0, Duration = TimeSpan.FromMilliseconds(200) };
-
-        var sb = new Storyboard();
-        sb.Children.Add(fadeIn);
-        sb.Children.Add(scaleX);
-        sb.Children.Add(scaleY);
-
-        Storyboard.SetTarget(fadeIn, Overlay);
-        Storyboard.SetTargetProperty(fadeIn, "Opacity");
-
-        Storyboard.SetTarget(scaleX, DialogScale);
-        Storyboard.SetTargetProperty(scaleX, "ScaleX");
-
-        Storyboard.SetTarget(scaleY, DialogScale);
-        Storyboard.SetTargetProperty(scaleY, "ScaleY");
-
-        sb.Begin();
+        await _viewModel.LoadAsync();     
     }
 
     private void CopyUsername_Click(object sender, RoutedEventArgs e)
@@ -75,40 +60,51 @@ public sealed partial class UserProfileDialog : UserControl
         }
     }
 
-    private void Overlay_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        CloseDialog();
-    }
-
     private void Close_Click(object sender, RoutedEventArgs e)
     {
-        CloseDialog();
+        var parentDialog = this.FindParent<ContentDialog>();
+        parentDialog?.Hide();
     }
     private void Avatar_Tapped(object sender, TappedRoutedEventArgs e)
     {
         ImagePreviewService.Show(_viewModel.AvatarUrl);
     }
-    private void CloseDialog()
+    private void AvatarGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        var fadeOut = new DoubleAnimation { To = 0.0, Duration = TimeSpan.FromMilliseconds(200) };
-        var scaleX = new DoubleAnimation { To = 0.8, Duration = TimeSpan.FromMilliseconds(200) };
-        var scaleY = new DoubleAnimation { To = 0.8, Duration = TimeSpan.FromMilliseconds(200) };
+        CameraButton.Visibility = Visibility.Visible;
+    }
 
-        var sb = new Storyboard();
-        sb.Children.Add(fadeOut);
-        sb.Children.Add(scaleX);
-        sb.Children.Add(scaleY);
+    private void AvatarGrid_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        CameraButton.Visibility = Visibility.Collapsed;
+    }
 
-        Storyboard.SetTarget(fadeOut, Overlay);
-        Storyboard.SetTargetProperty(fadeOut, "Opacity");
+    private void CameraButton_Click(object sender, RoutedEventArgs e)
+    {
+        CameraService.OpenPhotoCamera();
+    }
 
-        Storyboard.SetTarget(scaleX, DialogScale);
-        Storyboard.SetTargetProperty(scaleX, "ScaleX");
+    private async void FileButton_Click(object sender, RoutedEventArgs e)
+    {
+        var picker = new FileOpenPicker();
 
-        Storyboard.SetTarget(scaleY, DialogScale);
-        Storyboard.SetTargetProperty(scaleY, "ScaleY");
+        var hwnd = WindowNative.GetWindowHandle(App.Window);
+        InitializeWithWindow.Initialize(picker, hwnd);
 
-        sb.Completed += (s, e) => Closed?.Invoke(this, EventArgs.Empty);
-        sb.Begin();
+        picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        picker.ViewMode = PickerViewMode.Thumbnail;
+
+        picker.FileTypeFilter.Add(".png");
+        picker.FileTypeFilter.Add(".jpg");
+        picker.FileTypeFilter.Add(".jpeg");
+
+        StorageFile file = await picker.PickSingleFileAsync();
+
+        if (file != null)
+        {
+            var stream = await file.OpenReadAsync();
+
+            using var randomStream = stream.AsStreamForRead();
+        }
     }
 }
