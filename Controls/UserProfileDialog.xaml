@@ -15,15 +15,15 @@
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Spacing="12" >
 
                     <Grid Width="100" Height="100"
-      x:Name="AvatarGrid"
-      PointerEntered="AvatarGrid_PointerEntered"
-      PointerExited="AvatarGrid_PointerExited">
+                        x:Name="AvatarGrid"
+                        PointerEntered="AvatarGrid_PointerEntered"
+                        PointerExited="AvatarGrid_PointerExited">
 
                         <!-- Кликабельный аватар -->
                         <Ellipse Width="100" Height="100"
-             Tapped="Avatar_Tapped">
+                            Tapped="Avatar_Tapped">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding AvatarUrl, Mode=OneWay}" Stretch="UniformToFill"/>
+                                <ImageBrush ImageSource="{Binding CurrentAccount.AvatarUrl, Mode=OneWay}" Stretch="UniformToFill"/>
                             </Ellipse.Fill>
                         </Ellipse>
 
@@ -88,7 +88,7 @@
                             HorizontalAlignment="Left"/>
 
                         <TextBlock Grid.Column="2"
-                            Text="{Binding FirstName}"
+                            Text="{Binding FullName, Mode=TwoWay}"
                             FontSize="14"
                             FontWeight="Medium"
                             VerticalAlignment="Center"
@@ -106,19 +106,42 @@
                             Height="25"
                             ToolTipService.ToolTip="Edit name">
                             <Button.Flyout>
-                                <Flyout Placement="Bottom">
+                                <Flyout Placement="Bottom" x:Name="UpdateFullNameFlyout">
                                     <StackPanel Padding="12" MinWidth="240" Spacing="12">
                                         <TextBox Header="First Name"
-                                            Text="{Binding FirstName, Mode=TwoWay}" />
+                                            x:Name="FirstNameTextBox"
+                                            Text="{Binding CurrentAccount.FirstName, Mode=OneWay}"
+                                            MaxLength="32"/>
 
                                         <TextBox Header="Last Name"
-                                            Text="{Binding LastName, Mode=TwoWay}" />
+                                            x:Name="LastNameTextBox"
+                                            Text="{Binding CurrentAccount.LastName, Mode=OneWay}" 
+                                            MaxLength="32"/>
 
-                                        <Button Content="Save"
-                                            HorizontalAlignment="Right"
-                                            Foreground="White"/>
+                                        <TextBlock x:Name="ErrorTextBlock"
+                                            Foreground="Red"
+                                            Visibility="Collapsed"
+                                            Text="Failed to update name."/>
+
+
+                                        <Grid>
+                                            <Button x:Name="SaveFullNameButton"
+                                                Content="Save"
+                                                HorizontalAlignment="Right"
+                                                Foreground="White"
+                                                Click="SaveFullNameButton_Click"/>
+
+                                            <ProgressRing x:Name="SaveProgressRing"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                IsActive="False"
+                                                Visibility="Collapsed"/>
+                                        </Grid>
                                     </StackPanel>
                                 </Flyout>
+
                             </Button.Flyout>
                         </Button>
 
@@ -149,7 +172,7 @@
                             HorizontalAlignment="Left"/>
 
                         <TextBlock Grid.Column="2"
-                            Text="{Binding Username}"
+                            Text="{Binding CurrentAccount.Username}"
                             FontSize="14"
                             FontWeight="Medium"
                             VerticalAlignment="Center"
@@ -179,7 +202,7 @@
                                 <Flyout Placement="Bottom">
                                     <StackPanel Padding="12" MinWidth="240" Spacing="12">
                                         <TextBox Header="Username"
-                                            Text="{Binding Username, Mode=TwoWay}" />
+                                            Text="{Binding CurrentAccount.Username, Mode=OneWay}" />
 
                                         <Button Content="Save"
                                             HorizontalAlignment="Right"
@@ -215,7 +238,7 @@
                             HorizontalAlignment="Left"/>
 
                         <TextBlock Grid.Column="2"
-                            Text="{Binding UserId}"
+                            Text="{Binding CurrentAccount.AccountId}"
                             FontSize="14"
                             FontWeight="Medium"
                             VerticalAlignment="Center"
@@ -224,7 +247,7 @@
                             TextAlignment="Right"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap"
-                            ToolTipService.ToolTip="{Binding UserId}"
+                            ToolTipService.ToolTip="{Binding CurrentAccount.AccountId}"
                             Width="200"
                             Margin="0,0,6,0"/>
 
@@ -240,7 +263,7 @@
 
                     </Grid>
 
-                    <TextBox Text="{Binding Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding CurrentAccount.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             AcceptsReturn="True"
                             TextWrapping="Wrap"
                             PlaceholderText="Bio"

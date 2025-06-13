@@ -22,15 +22,16 @@ namespace Arqanum.Pages
             DataContext = ViewModel;
 
             ViewModel.ShowUserProfileRequested += ShowUserProfileDialog;
+
             ViewModel.NavigateRequested += pageType =>
             {
                 ContentFrame.Navigate(pageType, null, new SuppressNavigationTransitionInfo());
             };
+
             ViewModel.ThemeChanged += ApplyTheme;
 
             Loaded += async (s, e) =>
             {
-                await ViewModel.LoadAccountAvatarUrlAsync();
                 ApplyTheme(ViewModel.GetCurrentTheme());
 
                 foreach (var item in SideNavigation.MenuItems)

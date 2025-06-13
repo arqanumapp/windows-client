@@ -50,6 +50,25 @@ namespace Arqanum
             RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
         }
 
+        private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (!_isLoaded)
+            {
+                _isLoaded = true;
+
+                var accountExist = await _accountService.AccountExist();
+
+                if (accountExist)
+                {
+                    MainFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
+                }
+                else
+                {
+                    MainFrame.Navigate(typeof(WelcomePage), null, new DrillInNavigationTransitionInfo());
+                }
+            }
+        }
+
         #region Camera Popup
 
         private bool _pendingCameraPopupResize = false;
@@ -224,25 +243,6 @@ namespace Arqanum
         }
 
         #endregion
-
-        private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-        {
-            if (!_isLoaded)
-            {
-                _isLoaded = true;
-
-                var accountExist = await _accountService.AccountExist();
-
-                if (accountExist)
-                {
-                    MainFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
-                }
-                else
-                {
-                    MainFrame.Navigate(typeof(WelcomePage), null, new DrillInNavigationTransitionInfo());
-                }
-            }
-        }
 
         #region Window Resize Handling
 

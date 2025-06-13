@@ -3,9 +3,9 @@ using Arqanum.Utilities;
 using Arqanum.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
 using Windows.ApplicationModel.DataTransfer;
@@ -26,23 +26,48 @@ public sealed partial class UserProfileDialog : UserControl
         this.InitializeComponent();
 
         _viewModel = new UserProfileViewModel();
+
         DataContext = _viewModel;
-
-        Loaded += UserProfileDialog_Loaded;
-    }
-    private void Update_Click(object sender, RoutedEventArgs e)
-    {
-        // Логика обновления профиля,валидация и отправка данных
     }
 
-    private async void UserProfileDialog_Loaded(object sender, RoutedEventArgs e)
+    #region Update user profile
+
+    private async void SaveFullNameButton_Click(object sender, RoutedEventArgs e)
     {
-        await _viewModel.LoadAsync();     
+        if (DataContext is not UserProfileViewModel vm)
+            return;
+
+        ErrorTextBlock.Visibility = Visibility.Collapsed;
+        SaveFullNameButton.Visibility = Visibility.Collapsed;
+        SaveProgressRing.IsActive = true;
+        SaveProgressRing.Visibility = Visibility.Visible;
+
+        var result = await vm.UpdateFullName(FirstNameTextBox.Text, LastNameTextBox.Text);
+
+        if (result)
+        {
+            UpdateFullNameFlyout.Hide();
+        }
+        else
+        {
+            ErrorTextBlock.Visibility = Visibility.Visible;
+            SaveFullNameButton.Visibility = Visibility.Visible;
+            SaveProgressRing.IsActive = false;
+            SaveProgressRing.Visibility = Visibility.Collapsed;
+        }
+
+        SaveProgressRing.IsActive = false;
+        SaveProgressRing.Visibility = Visibility.Collapsed;
+        SaveFullNameButton.Visibility = Visibility.Visible;
     }
+
+    #endregion
+
+    #region Copy buttons
 
     private void CopyUsername_Click(object sender, RoutedEventArgs e)
     {
-        if (_viewModel?.Username is string username && !string.IsNullOrEmpty(username))
+        if (_viewModel?.CurrentAccount.Username is string username && !string.IsNullOrEmpty(username))
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(username);
@@ -52,7 +77,7 @@ public sealed partial class UserProfileDialog : UserControl
 
     private void CopyUserId_Click(object sender, RoutedEventArgs e)
     {
-        if (_viewModel?.UserId is string userId && !string.IsNullOrEmpty(userId))
+        if (_viewModel?.CurrentAccount.AccountId is string userId && !string.IsNullOrEmpty(userId))
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(userId);
@@ -60,14 +85,13 @@ public sealed partial class UserProfileDialog : UserControl
         }
     }
 
-    private void Close_Click(object sender, RoutedEventArgs e)
-    {
-        var parentDialog = this.FindParent<ContentDialog>();
-        parentDialog?.Hide();
-    }
+    #endregion
+
+    #region Avatar
+
     private void Avatar_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        ImagePreviewService.Show(_viewModel.AvatarUrl);
+        ImagePreviewService.Show(_viewModel.CurrentAccount.AvatarUrl);
     }
     private void AvatarGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
@@ -106,5 +130,13 @@ public sealed partial class UserProfileDialog : UserControl
 
             using var randomStream = stream.AsStreamForRead();
         }
+    }
+
+    #endregion
+
+    private void Close_Click(object sender, RoutedEventArgs e)
+    {
+        var parentDialog = this.FindParent<ContentDialog>();
+        parentDialog?.Hide();
     }
 }

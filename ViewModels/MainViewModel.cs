@@ -16,11 +16,67 @@ namespace Arqanum.ViewModels
 
         private AccountService _accountService;
 
+        public MainViewModel()
+        {
+            _themeService = App.Services.GetRequiredService<ThemeService>();
+
+            _themeService.ThemeChanged += theme => ThemeChanged?.Invoke(theme);
+
+            _accountService = App.Services.GetRequiredService<AccountService>();
+
+            ThemeChanged?.Invoke(_themeService.CurrentTheme);
+
+            if (_accountService.CurrentAccount is INotifyPropertyChanged npc)
+            {
+                npc.PropertyChanged += OnAccountPropertyChanged;
+            }
+            AccountAvatarUrl = _accountService.CurrentAccount.AvatarUrl;
+        }
+
+        #region Avatar
+
+        private string? _accountAvatarUrl;
+
+        public string? AccountAvatarUrl
+        {
+            get => _accountAvatarUrl;
+            private set
+            {
+                if (_accountAvatarUrl != value)
+                {
+                    _accountAvatarUrl = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnAccountPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_accountService.CurrentAccount.AvatarUrl))
+            {
+                AccountAvatarUrl = _accountService.CurrentAccount.AvatarUrl;
+            }
+        }
+        #region Navigation
+
         private object? _lastSelectedItem;
+
         private object? _selectedItem;
-        private string? _accountAvatarUrl;
+
+        public event Action? ShowUserProfileRequested;
+
+        public event Action<Type>? NavigateRequested;
+
+        public event Action<string, object?>? NavigateWithParamRequested;
 
         public object? SelectedItem
         {
@@ -36,37 +92,6 @@ namespace Arqanum.ViewModels
                 }
             }
         }
-        public string? AccountAvatarUrl
-        {
-            get => _accountAvatarUrl;
-            private set
-            {
-                if (_accountAvatarUrl != value)
-                {
-                    _accountAvatarUrl = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public async Task LoadAccountAvatarUrlAsync()
-        {
-            try
-            {
-                _accountService = App.Services.GetRequiredService<AccountService>();
-                var url = await _accountService.GetAccountAvatarUrl();
-                AccountAvatarUrl = url;
-            }
-            catch
-            {
-                AccountAvatarUrl = null;
-            }
-        }
-        private const string ThemeSettingKey = "AppTheme";
-
-        public event Action? ShowUserProfileRequested;
-        public event Action<Type>? NavigateRequested;
-        public event Action<string, object?>? NavigateWithParamRequested;
-        public event Action<ElementTheme>? ThemeChanged;
 
         private void OnSelectedItemChanged()
         {
@@ -102,27 +127,19 @@ namespace Arqanum.ViewModels
                 }
             }
         }
+        #endregion
 
-        public MainViewModel()
-        {
-            _themeService = App.Services.GetRequiredService<ThemeService>();
+        #region Themes
 
-            _themeService.ThemeChanged += theme => ThemeChanged?.Invoke(theme);
+        public event Action<ElementTheme>? ThemeChanged;
 
-            ThemeChanged?.Invoke(_themeService.CurrentTheme);
-        }
-        public ElementTheme GetCurrentTheme()
-        {
-            return _themeService.CurrentTheme;
-        }
+        public ElementTheme GetCurrentTheme() => _themeService.CurrentTheme;
+
         private void ToggleTheme()
         {
             _themeService.ToggleTheme();
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        #endregion    
     }
 }

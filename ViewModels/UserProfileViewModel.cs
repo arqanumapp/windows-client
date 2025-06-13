@@ -1,7 +1,8 @@
 ﻿using ArqanumCore.Services;
+using ArqanumCore.ViewModels.Account;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Arqanum.ViewModels;
@@ -10,86 +11,57 @@ public class UserProfileViewModel : INotifyPropertyChanged
 {
     private AccountService _accountService;
 
-    private string _avatarUrl = string.Empty;
-    private string _fullName = string.Empty;
-    private string _firstName = string.Empty;
-    private string _lastName = string.Empty;
-    private string _username = string.Empty;
-    private string _bio = string.Empty;
-    private string _userId = string.Empty;
+    private AccountViewModel? _currentAccount;
 
-    public string AvatarUrl
-    {
-        get => _avatarUrl;
-        set => SetField(ref _avatarUrl, value);
-    }
-
-    public string FullName
-    {
-        get => _fullName;
-        set => SetField(ref _fullName, value);
-    }
-
-    public string LastName
-    {
-        get => _lastName;
-        set => SetField(ref _lastName, value);
-    }
-
-    public string FirstName
-    {
-        get => _firstName;
-        set => SetField(ref _firstName, value);
-    }
-
-    public string Username
-    {
-        get => _username;
-        set => SetField(ref _username, value);
-    }
-
-    public string Bio
-    {
-        get => _bio;
-        set => SetField(ref _bio, value);
-    }
-
-    public string UserId
-    {
-        get => _userId;
-        set => SetField(ref _userId, value);
-    }
-
-
-    public async Task LoadAsync()
+    public UserProfileViewModel()
     {
         _accountService = App.Services.GetRequiredService<AccountService>();
-        var userData = await _accountService.GetAccountAsync();
+        CurrentAccount = _accountService.CurrentAccount;
+    }
 
-        if (userData != null)
+    #region Binding properties
+
+    public AccountViewModel? CurrentAccount
+    {
+        get => _currentAccount;
+        private set
         {
-            UserId = userData.AccountId;
-            AvatarUrl = userData.AvatarUrl;
-            FullName = userData.FirstName + " " + userData.LastName;
-            Username = userData.Username;
-            FirstName = userData.FirstName ?? string.Empty;
-            LastName = userData.LastName ?? string.Empty;
-            Bio = userData.Bio;
+            if (_currentAccount != value)
+            {
+                if (_currentAccount != null)
+                    _currentAccount.PropertyChanged -= OnCurrentAccountPropertyChanged;
+
+                _currentAccount = value;
+
+                if (_currentAccount != null)
+                    _currentAccount.PropertyChanged += OnCurrentAccountPropertyChanged;
+
+                OnPropertyChanged(nameof(CurrentAccount));
+                OnPropertyChanged(nameof(FullName));
+            }
         }
     }
 
+    public string FullName => string.Join(" ", new[] { _currentAccount?.FirstName, _currentAccount?.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+    private void OnCurrentAccountPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "FirstName" || e.PropertyName == "LastName")
+        {
+            OnPropertyChanged(nameof(FullName));
+        }
+    }
+    protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    #endregion
 
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (Equals(field, value))
-            return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
+    #region Update user profile
+
+    public async Task<bool> UpdateFullName(string firstName, string lastName) => await _accountService.UpdateFullNameAsync(firstName, lastName);
+
+    #endregion
+
 }
 
