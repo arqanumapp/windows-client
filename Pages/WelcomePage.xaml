@@ -32,7 +32,7 @@
                 <TextBlock Text="Welcome to&#x0a;post quantum&#x0a;end-to-end encryption&#x0a;messenger"
                            Foreground="{ThemeResource TextControlForeground}"
                            FontSize="36"
-                           FontWeight="Bold"
+                           FontWeight="Medium"
                            TextWrapping="Wrap"
                            TextAlignment="Left" />
 

@@ -3,11 +3,10 @@ using Arqanum.Utilities;
 using Arqanum.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
+using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -23,11 +22,13 @@ public sealed partial class UserProfileDialog : UserControl
 
     public UserProfileDialog()
     {
-        this.InitializeComponent();
+        InitializeComponent();
 
         _viewModel = new UserProfileViewModel();
 
         DataContext = _viewModel;
+
+        UsernameTextBox.BeforeTextChanging += UsernameTextBox_BeforeTextChanging;
     }
 
     #region Update user profile
@@ -61,6 +62,50 @@ public sealed partial class UserProfileDialog : UserControl
         SaveFullNameButton.Visibility = Visibility.Visible;
     }
 
+    private async void SaveUsernameButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not UserProfileViewModel vm)
+            return;
+        
+        var result = await vm.UpdateUsernameAsync(UsernameTextBox.Text);
+        if (result)
+        {
+            UpdateUserNameFlyout.Hide();
+        }
+        else
+        {
+            UserNameIsNotAvaible.Visibility = Visibility.Visible;
+        }
+
+    }
+
+    private async void SaveBioButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not UserProfileViewModel vm)
+            return;
+
+        BioErrorTextBlock.Visibility = Visibility.Collapsed;
+        SaveBioButton.Visibility = Visibility.Collapsed;
+        SaveBioProgressRing.IsActive = true;
+        SaveBioProgressRing.Visibility = Visibility.Visible;
+
+        var result = await vm.UpdateBioAsync(BioTextBox.Text);
+
+        if (result)
+        {
+            UpdateBioFlyout.Hide();
+        }
+        else
+        {
+            BioErrorTextBlock.Visibility = Visibility.Visible;
+            SaveBioButton.Visibility = Visibility.Visible;
+            SaveBioProgressRing.IsActive = false;
+            SaveBioProgressRing.Visibility = Visibility.Collapsed;
+        }
+        SaveBioProgressRing.IsActive = false;
+        SaveBioProgressRing.Visibility = Visibility.Collapsed;
+        SaveBioButton.Visibility = Visibility.Visible;
+    }
     #endregion
 
     #region Copy buttons
@@ -117,22 +162,81 @@ public sealed partial class UserProfileDialog : UserControl
 
         picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
         picker.ViewMode = PickerViewMode.Thumbnail;
-
         picker.FileTypeFilter.Add(".png");
         picker.FileTypeFilter.Add(".jpg");
         picker.FileTypeFilter.Add(".jpeg");
 
-        StorageFile file = await picker.PickSingleFileAsync();
+        var file = await picker.PickSingleFileAsync();
+        if (file == null)
+            return;
 
-        if (file != null)
-        {
-            var stream = await file.OpenReadAsync();
+        var format = Path.GetExtension(file.Name)?.TrimStart('.').ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(format))
+            return;
 
-            using var randomStream = stream.AsStreamForRead();
-        }
+        using var stream = await file.OpenStreamForReadAsync();
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
+
+        await _viewModel.UpdateAvatarAsync(bytes, format);
     }
 
+
+
     #endregion
+
+    private async void CheckUsernameButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not UserProfileViewModel vm)
+            return;
+
+        CheckUsernameProgressRing.IsActive = true;
+        CheckUsernameProgressRing.Visibility = Visibility.Visible;
+        CheckUsernameButton.Visibility = Visibility.Collapsed;
+        var username = UsernameTextBox.Text;
+
+        if (string.IsNullOrWhiteSpace(username) || username.Length < 3 || username.Length > 20)
+        {
+            ErrorTextBlock.Visibility = Visibility.Visible;
+            CheckUsernameProgressRing.IsActive = false;
+            CheckUsernameProgressRing.Visibility = Visibility.Collapsed;
+            CheckUsernameButton.Visibility = Visibility.Visible;
+            return;
+        }
+
+        var isAvailable = await vm.OnCheckUsername(username);
+
+        if (isAvailable)
+        {
+            UserNameIsNotAvaible.Visibility = Visibility.Collapsed;
+            CheckUsernameButton.Visibility = Visibility.Collapsed;
+            UserNameIsAvaible.Visibility = Visibility.Visible;
+            SaveUsernameButton.Visibility = Visibility.Visible;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            CheckUsernameButton.Visibility = Visibility.Collapsed;
+            UserNameIsNotAvaible.Visibility = Visibility.Visible;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+        }
+        CheckUsernameProgressRing.IsActive = false;
+        CheckUsernameProgressRing.Visibility = Visibility.Collapsed;
+    }
+
+    private void UsernameTextBox_BeforeTextChanging(TextBox sender, TextBoxBeforeTextChangingEventArgs args)
+    {
+        args.Cancel = args.NewText.Any(c => !(
+            (c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            (c >= '0' && c <= '9') ||
+            c == '_'));
+        SaveUsernameButton.Visibility = Visibility.Collapsed;
+        UserNameIsAvaible.Visibility = Visibility.Collapsed;
+        UserNameIsNotAvaible.Visibility = Visibility.Collapsed;
+        CheckUsernameButton.Visibility = Visibility.Visible;
+    }
 
     private void Close_Click(object sender, RoutedEventArgs e)
     {

@@ -1,9 +1,13 @@
-﻿using ArqanumCore.Services;
+﻿using Arqanum.Utilities;
+using ArqanumCore.Services;
 using ArqanumCore.ViewModels.Account;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Arqanum.ViewModels;
 
@@ -19,6 +23,22 @@ public class UserProfileViewModel : INotifyPropertyChanged
         CurrentAccount = _accountService.CurrentAccount;
     }
 
+    public async Task<bool> OnCheckUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return false;
+        }
+
+        try
+        {
+            return await _accountService.IsUsernameAvailableAsync(username);
+        }
+        catch
+        {
+            return false;
+        }
+    }
     #region Binding properties
 
     public AccountViewModel? CurrentAccount
@@ -59,9 +79,25 @@ public class UserProfileViewModel : INotifyPropertyChanged
 
     #region Update user profile
 
+    public async Task<bool> UpdateUsernameAsync(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username) || username.Length < 3 || username.Length > 20)
+        {
+            return false;
+        }
+        var result = await _accountService.UpdateUsernameAsync(username);
+
+        return result;
+    }
+
     public async Task<bool> UpdateFullName(string firstName, string lastName) => await _accountService.UpdateFullNameAsync(firstName, lastName);
 
+    public async Task<bool> UpdateBioAsync(string bio) => await _accountService.UpdateBioAsync(bio);
+
+    public async Task<bool> UpdateAvatarAsync(byte[] imageData, string format) => await _accountService.UpdateAvatarAsync(imageData, format);
+
     #endregion
+
 
 }
 

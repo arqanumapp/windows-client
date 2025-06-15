@@ -19,7 +19,6 @@
                         PointerEntered="AvatarGrid_PointerEntered"
                         PointerExited="AvatarGrid_PointerExited">
 
-                        <!-- Кликабельный аватар -->
                         <Ellipse Width="100" Height="100"
                             Tapped="Avatar_Tapped">
                             <Ellipse.Fill>
@@ -180,13 +179,14 @@
                             HorizontalAlignment="Right"
                             TextAlignment="Right"
                             Margin="0,0,6,0"/>
+                        
                         <Button FontFamily="Segoe MDL2 Assets"
                             Grid.Column="3"
                             Content="&#xE8C8;" 
                             FontSize="14"
                             Padding="4"
                             Click="CopyUsername_Click"
-                             Margin="0,0,6,0"
+                            Margin="0,0,6,0"
                             ToolTipService.ToolTip="Copy username"/>
                         
                         <Button FontFamily="Segoe MDL2 Assets"
@@ -197,22 +197,65 @@
                             Width="25"
                             Height="25"
                             ToolTipService.ToolTip="Edit username">
-                            
                             <Button.Flyout>
-                                <Flyout Placement="Bottom">
-                                    <StackPanel Padding="12" MinWidth="240" Spacing="12">
-                                        <TextBox Header="Username"
-                                            Text="{Binding CurrentAccount.Username, Mode=OneWay}" />
+                                <Flyout Placement="Bottom" x:Name="UpdateUserNameFlyout" >
+                                    <StackPanel Padding="12" MinWidth="250" Spacing="12">
+
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <TextBlock Text="Username"
+                                                FontSize="14"
+                                                VerticalAlignment="Center"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                                            
+                                            <TextBox x:Name="UsernameTextBox"
+                                                Width="200"
+                                                Text="{Binding CurrentAccount.Username, Mode=OneWay}" />
+
+                                            <Button Content="Check"
+                                                x:Name="CheckUsernameButton"
+                                                MinWidth="60"
+                                                Background="{ThemeResource ButtonBackground}"
+                                                Foreground="{ThemeResource ButtonForeground}"
+                                                Click="CheckUsernameButton_Click"
+                                                VerticalAlignment="Center"
+                                                Visibility="Visible" />
+
+                                            <ProgressRing Width="20"
+                                                Height="20"
+                                                IsActive="True"
+                                                x:Name="CheckUsernameProgressRing"
+                                                VerticalAlignment="Center"
+                                                Visibility="Collapsed" />
+
+                                            <FontIcon Glyph="&#xE001;"
+                                                FontSize="18"
+                                                x:Name="UserNameIsAvaible"
+                                                VerticalAlignment="Center"
+                                                Foreground="Green"
+                                                Visibility="Collapsed" />
+
+                                            <FontIcon Glyph="&#xE10A;"
+                                                FontSize="18"
+                                                x:Name="UserNameIsNotAvaible"
+                                                VerticalAlignment="Center"
+                                                Foreground="Red"
+                                                Visibility="Collapsed" />
+                                        </StackPanel>
 
                                         <Button Content="Save"
+                                            x:Name="SaveUsernameButton"
                                             HorizontalAlignment="Right"
-                                            Foreground="White"/>
+                                            Foreground="White"
+                                                Click="SaveUsernameButton_Click"
+                                            Visibility="Collapsed" />
                                     </StackPanel>
                                 </Flyout>
                             </Button.Flyout>
+
                         </Button>
                         
                     </Grid>
+                        
                     <Grid Width="320" HorizontalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -262,22 +305,100 @@
                             ToolTipService.ToolTip="Copy user ID"/>
 
                     </Grid>
+                    <Grid Width="320" HorizontalAlignment="Center" Margin="0,0,0,30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBox Text="{Binding CurrentAccount.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            AcceptsReturn="True"
-                            TextWrapping="Wrap"
-                            PlaceholderText="Bio"
-                            FontSize="13"
-                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                            BorderThickness="1"
-                            Height="100"
-                            Width="320" />
+                        <TextBlock Grid.Column="0"
+                            FontFamily="Segoe MDL2 Assets"
+                            Text="&#xE70F;" 
+                            FontSize="14"
+                            VerticalAlignment="Top"
+                            Margin="0,0,8,0"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                    <TextBlock Text="No more than 150 characters"
-                            FontSize="12"
+                        <TextBlock Grid.Column="1"
+                            Text="Bio"
+                            FontSize="14"
+                            FontWeight="Thin"
+                            VerticalAlignment="Top"
                             Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                            Margin="0,4,0,12" />
+                            HorizontalAlignment="Left"/>
 
+                        <Border 
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0"
+                            MinWidth="240"
+                            MaxWidth="240">
+                            <TextBlock Text="{Binding CurrentAccount.Bio, Mode=OneWay}"
+                                  Margin="15,0,0,0"     
+                                FontSize="14"
+                                FontWeight="Medium"
+                                Foreground="{ThemeResource SystemAccentColor}"
+                                TextWrapping="Wrap"
+                                TextTrimming="None"
+                                TextAlignment="Left" />
+                        </Border>
+
+
+                        <Button FontFamily="Segoe MDL2 Assets"
+                            Grid.Column="3"
+                            VerticalAlignment="Top"
+                            Content="&#xE70F;" 
+                            Padding="0"
+                            FontSize="12"
+                            Width="25"
+                            Height="25"
+                            ToolTipService.ToolTip="Edit bio">
+                            <Button.Flyout>
+                                <Flyout Placement="Bottom" x:Name="UpdateBioFlyout">
+                                    <StackPanel Padding="12" MinWidth="240" Spacing="12">
+                                        <TextBox Header="Bio"
+                                            x:Name="BioTextBox"
+                                            Text="{Binding CurrentAccount.Bio, Mode=OneWay}"
+                                            MaxLength="150"
+                                            AcceptsReturn="True"
+                                            TextWrapping="Wrap"
+                                            Height="100" />
+                                        
+                                        <TextBlock Text="No more than 150 characters"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                            Margin="0,0,0,12" />
+                                        
+                                        <TextBlock x:Name="BioErrorTextBlock"
+                                            Foreground="Red"
+                                            Visibility="Collapsed"
+                                            Text="Failed to update bio."/>
+                                    
+                                        <Grid>
+                                            <Button x:Name="SaveBioButton"
+                                                Content="Save"
+                                                HorizontalAlignment="Right"
+                                                Foreground="White"
+                                                Click="SaveBioButton_Click"/>
+
+                                            <ProgressRing x:Name="SaveBioProgressRing"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                IsActive="False"
+                                                Visibility="Collapsed"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Flyout>
+
+                            </Button.Flyout>
+                        </Button>
+
+                    </Grid>
+                    
                 </StackPanel>
                 </ScrollViewer>
 

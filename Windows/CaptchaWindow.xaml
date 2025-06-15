@@ -11,7 +11,7 @@
 
     <Grid>
         <wv2:WebView2 x:Name="WebView"
-                      Source="https://enigram-001-site1.qtempurl.com/captcha"
+                      Source="https://arqanumapp-001-site1.qtempurl.com/captcha"
                       WebMessageReceived="WebView_WebMessageReceived" />
     </Grid>
 </Window>

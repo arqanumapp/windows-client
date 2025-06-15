@@ -14,18 +14,35 @@ namespace Arqanum.ViewModels
 {
     public class CreateAccountViewModel : INotifyPropertyChanged
     {
+        public CreateAccountViewModel()
+        {
+            _accountService = App.Services.GetRequiredService<AccountService>();
+
+            CheckUsernameCommand = new AsyncRelayCommand(OnCheckUsername);
+            ContinueCommand = new AsyncRelayCommand(OnContinueAsync);
+            BackCommand = new RelayCommand(OnBack);
+        }
+
+        private readonly AccountService _accountService;
 
         private CancellationTokenSource? _cancellationTokenSource;
+
+        public Action? NavigateToMainPageAction { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Func<string, Task>? ShowMessageDialog;
+
+        public Action? GoBackAction;
+
+        #region Fields for data binding
 
         private string _username = "";
         private string _firstName = "";
         private string _lastName = "";
         private string? _statusMessage;
-
-        private readonly AccountService _accountService;
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private bool _isCheckingUsername;
+        private bool? _isUsernameAvailable;
 
         public string Username
         {
@@ -89,9 +106,7 @@ namespace Arqanum.ViewModels
                     OnPropertyChanged(nameof(StatusMessage));
                 }
             }
-        }
-        private bool _isCheckingUsername;
-        private bool? _isUsernameAvailable;
+        }       
 
         public bool IsCheckingUsername
         {
@@ -132,28 +147,21 @@ namespace Arqanum.ViewModels
         public bool IsSuccessIconVisible => IsUsernameAvailable == true;
         public bool CanContinue => IsUsernameAvailable == true;
 
+        #endregion
+
+        #region Commands
+
         public ICommand CheckUsernameCommand { get; }
         public ICommand ContinueCommand { get; }
         public ICommand BackCommand { get; }
 
-        public Func<string, Task>? ShowMessageDialog;
-        public Action? GoBackAction;
-
-        public CreateAccountViewModel()
-        {
-            _accountService = App.Services.GetRequiredService<AccountService>();
-
-            CheckUsernameCommand = new AsyncRelayCommand(OnCheckUsername);
-            ContinueCommand = new AsyncRelayCommand(OnContinueAsync);
-            BackCommand = new RelayCommand(OnBack);
-        }
+        #endregion
 
         private void OnBack()
         {
             _cancellationTokenSource?.Cancel();
             GoBackAction?.Invoke();
         }
-
 
         private async Task OnContinueAsync()
         {
@@ -164,7 +172,7 @@ namespace Arqanum.ViewModels
             }
 
             if (_cancellationTokenSource != null)
-                return; 
+                return;
 
             _cancellationTokenSource = new CancellationTokenSource();
             StatusMessage = "Creating account...";
@@ -186,7 +194,7 @@ namespace Arqanum.ViewModels
 
                 if (success)
                 {
-                    await ShowMessageDialog?.Invoke($"Account '{Username}' created successfully.");
+                    NavigateToMainPageAction?.Invoke();
                 }
                 else
                 {
@@ -208,8 +216,6 @@ namespace Arqanum.ViewModels
             }
         }
 
-
-
         private async Task OnCheckUsername()
         {
             if (string.IsNullOrWhiteSpace(Username))
@@ -218,13 +224,12 @@ namespace Arqanum.ViewModels
                     await ShowMessageDialog.Invoke("Please enter a username to check.");
                 return;
             }
+
             IsCheckingUsername = true;
             IsUsernameAvailable = null;
 
             try
             {
-                await Task.Delay(2000); 
-
                 bool isAvailable = await _accountService.IsUsernameAvailableAsync(Username);
                 IsUsernameAvailable = isAvailable;
             }
@@ -239,8 +244,6 @@ namespace Arqanum.ViewModels
                 IsCheckingUsername = false;
             }
         }
-
-
 
         private string FilterName(string input)
         {

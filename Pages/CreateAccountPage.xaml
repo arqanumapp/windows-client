@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:utilities="using:Arqanum.Utilities"
+    xmlns:utilities="using:Arqanum.Utilities" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <utilities:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -14,14 +14,21 @@
     <Grid Padding="40" RowDefinitions="Auto,*,Auto">
 
         <Grid>
-            <Button Width="40"
+            <Button  Width="40"
                     Height="40"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Command="{Binding BackCommand}"
                     Background="{ThemeResource ButtonBackground}"
-                    Foreground="{ThemeResource ButtonForeground}">
-                <FontIcon Glyph="&#xE72B;" FontFamily="Segoe MDL2 Assets" />
+                    Foreground="{ThemeResource ButtonForeground}" PointerEntered="Button_PointerEntered" PointerExited="Button_PointerExited" >
+                <AnimatedIcon x:Name="SearchAnimatedIcon">
+                    <AnimatedIcon.Source>
+                        <animatedvisuals:AnimatedBackVisualSource/>
+                    </AnimatedIcon.Source>
+                    <AnimatedIcon.FallbackIconSource>
+                        <SymbolIconSource Symbol="Find"/>
+                    </AnimatedIcon.FallbackIconSource>
+                </AnimatedIcon>
             </Button>
         </Grid>
 
@@ -37,8 +44,9 @@
                        Foreground="{ThemeResource TextControlForeground}"
                        TextAlignment="Center"
                        HorizontalAlignment="Center" />
-
+            
             <Grid ColumnDefinitions="*,Auto" Height="40">
+                
                 <TextBox x:Name="UsernameTextBox"
                     PlaceholderText="Username"
                     Grid.Column="0"
@@ -63,13 +71,13 @@
 
                     <FontIcon Glyph="&#xE001;" 
                         FontSize="18"
-                            Foreground="Green"
-                            Visibility="{Binding IsSuccessIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Foreground="Green"
+                        Visibility="{Binding IsSuccessIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                     <FontIcon Glyph="&#xE10A;"
-                            FontSize="18"
-                            Foreground="Red"
-                            Visibility="{Binding IsFailureIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        FontSize="18"
+                        Foreground="Red"
+                        Visibility="{Binding IsFailureIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </StackPanel>
 
             </Grid>
@@ -104,10 +112,13 @@
 
             <TextBlock Text="{Binding StatusMessage}"
                 Margin="0,8,0,0"
-                TextWrapping="Wrap"
-                Foreground="Green"
+                Foreground="{ThemeResource SystemAccentColor}"
                 FontSize="14"
-                HorizontalAlignment="Left" />
+                HorizontalAlignment="Left"
+                MaxWidth="300"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap" />
+
         </StackPanel>
     </Grid>
 </Page>
