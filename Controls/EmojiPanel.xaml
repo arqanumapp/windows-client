@@ -1,0 +1,33 @@
+<UserControl
+    x:Class="YourApp.Controls.EmojiPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls">
+
+    <Border CornerRadius="8"
+            Width="265" Height="200">
+        <ScrollViewer>
+            <winui:ItemsRepeater x:Name="EmojiRepeater" ItemsSource="{x:Bind Emojis, Mode=OneWay}">
+                <winui:ItemsRepeater.Layout>
+                    <winui:UniformGridLayout 
+                        MaximumRowsOrColumns="6"
+                        Orientation="Horizontal"
+                        MinColumnSpacing="0"
+                        MinRowSpacing="0"/>
+                </winui:ItemsRepeater.Layout>
+                <winui:ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Button Content="{x:Bind}" 
+                                Background="Transparent" 
+                                BorderBrush="Transparent"
+                                FontSize="20"
+                                Tapped="Emoji_Tapped"
+                                IsTabStop="False"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                    </DataTemplate>
+                </winui:ItemsRepeater.ItemTemplate>
+            </winui:ItemsRepeater>
+        </ScrollViewer>
+    </Border>
+</UserControl>
