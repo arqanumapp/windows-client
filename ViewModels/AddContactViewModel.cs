@@ -49,4 +49,18 @@ public class AddContactViewModel : INotifyPropertyChanged
             return false;
         }
     }
+    public async Task<bool> AddContactAsync()
+    {
+        if (Result is null)
+            return false;
+        try
+        {
+            var success = await _contactService.AddContactAsync(Result);
+            return success;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

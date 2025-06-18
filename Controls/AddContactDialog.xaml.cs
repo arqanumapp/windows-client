@@ -4,6 +4,7 @@ using Arqanum.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Threading.Tasks;
 
 namespace Arqanum.Controls;
 
@@ -32,14 +33,12 @@ public sealed partial class AddContactDialog : UserControl
         NotFoundText.Visibility = Visibility.Collapsed;
         ResultPanel.Visibility = Visibility.Collapsed;
 
-        // Показываем спиннер, скрываем кнопку
         SearchButton.Visibility = Visibility.Collapsed;
         SearchSpinner.Visibility = Visibility.Visible;
         SearchSpinner.IsActive = true;
 
         var found = await _viewModel.SearchAsync();
 
-        // Скрываем спиннер, показываем кнопку
         SearchSpinner.IsActive = false;
         SearchSpinner.Visibility = Visibility.Collapsed;
         SearchButton.Visibility = Visibility.Visible;
@@ -62,8 +61,8 @@ public sealed partial class AddContactDialog : UserControl
         }
     }
 
-    private void Add_Click(object sender, RoutedEventArgs e)
+    private async Task Add_Click(object sender, RoutedEventArgs e)
     {
-
+        await _viewModel.AddContactAsync();
     }
 }
