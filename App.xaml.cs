@@ -10,11 +10,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
+using System.Runtime.InteropServices;
+
 namespace Arqanum
 {
     public partial class App : Application
     {
-
         public static IServiceProvider Services;
 
         private IHost _host;
@@ -24,6 +25,8 @@ namespace Arqanum
         private Mutex _appMutex;
 
         private const string MutexName = "Arqanum_SingleInstance_Mutex";
+
+        private TrayIconManager _trayIconManager;
 
         public App()
         {
@@ -61,18 +64,42 @@ namespace Arqanum
                 services.AddTransient<CaptchaWindow>();
 
                 services.AddSingleton<MainWindow>();
+
             })
             .Build();
 
             Services = _host.Services;
 
-            var mainWindow = Services.GetRequiredService<MainWindow>();
             var themeService = Services.GetRequiredService<ThemeService>();
+            var mainWindow = Services.GetRequiredService<MainWindow>();
 
             Window = mainWindow;
+
+            Window.Closed += OnWindowClosed;
+
             Window.Activate();
+
+            _trayIconManager = new TrayIconManager(mainWindow, ExitApplication);
+
             themeService.RestoreTheme();
         }
 
+        private void OnWindowClosed(object sender, WindowEventArgs args)
+        {
+            args.Handled = true;
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(Window);
+            ShowWindow(hwnd, 0); 
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        public void ExitApplication()
+        {
+            _trayIconManager?.Dispose();
+            _host?.Dispose();
+            Environment.Exit(0);
+        }
     }
 }

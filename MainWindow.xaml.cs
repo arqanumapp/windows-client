@@ -48,8 +48,11 @@ namespace Arqanum
             this.SizeChanged += MainWindow_SizeChanged;
 
             RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
-        }
 
+
+        }
+        
+       
         private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (!_isLoaded)
