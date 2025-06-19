@@ -46,6 +46,8 @@ namespace Arqanum
 
                 services.AddTransient<ICaptchaProvider, CaptchaProvider>();
 
+                services.AddTransient<IShowNotyficationService, ShowNotyficationService>();
+
                 services.AddArqanumCore();
 
                 services.AddSingleton<ThemeService>();

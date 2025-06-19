@@ -61,7 +61,7 @@ public sealed partial class AddContactDialog : UserControl
         }
     }
 
-    private async Task Add_Click(object sender, RoutedEventArgs e)
+    private async void Add_Click(object sender, RoutedEventArgs e)
     {
         await _viewModel.AddContactAsync();
     }
