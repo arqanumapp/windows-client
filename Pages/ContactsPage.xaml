@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:models="using:ArqanumCore.ViewModels.Contact"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <StackPanel Orientation="Horizontal" Margin="10,10,10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Spacing="8">
@@ -24,21 +25,22 @@
         </StackPanel>
 
         <Pivot Margin="0,50,0,0">
-        <PivotItem>
+            <PivotItem>
                 <PivotItem.Header>
                     <StackPanel>
                         <TextBlock Text="Contacts" FontSize="16" />
                     </StackPanel>
                 </PivotItem.Header>
                 <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="350"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
                     <Grid Grid.Column="0" Background="Transparent">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
                         <AutoSuggestBox
@@ -53,49 +55,87 @@
                             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                             BorderThickness="1"/>
 
-                        <ListView Grid.Row="1"  Margin="0">
-                            <ListViewItem Content="Contact 1" />
-                            <ListViewItem Content="Contact 2" />
-                            <ListViewItem Content="Contact 3" />
+                        <ListView
+                            Grid.Row="1"
+                            x:Name="ContactsListView"
+                            ItemsSource="{x:Bind ViewModel.ConfirmedContacts, Mode=OneWay}"
+                            Margin="-20,10,-20,0"
+                            SelectionMode="None"
+                            MinHeight="100">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ContactsItemViewModel">
+                                    <Grid Padding="8" Height="64">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Ellipse Width="48" Height="48">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{x:Bind FullName}" FontSize="12"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                            Width="42" Height="42"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            ToolTipService.ToolTip="Delete contact"
+                                            Click="OnDeleteContactClick">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                Text="&#xE74D;" 
+                                                FontSize="16"
+                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </Grid>
 
-                    
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                        <TextBlock 
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="40"
+                            Text="&#xE716;"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
 
-                        <StackPanel  Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-                            <TextBlock 
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="40"
-                                    Text="&#xE716;"
+                        <TextBlock Text="Contacts"
+                       TextWrapping="Wrap"
+                       FontSize="25"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
 
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
-
-            <TextBlock Text="Contacts"
-                   TextWrapping="Wrap"
-                   FontSize="25"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-
-        <TextBlock Text="List of all your contacts"
-                   TextWrapping="Wrap"
-                   FontSize="15"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-    </StackPanel>
-
-
+                        <TextBlock Text="List of all your contacts"
+                       TextWrapping="Wrap"
+                       FontSize="15"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
-        </PivotItem>
+            </PivotItem>
 
-        <PivotItem>
+
+            <PivotItem>
                 <PivotItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
                         <TextBlock Text="Incoming" FontSize="16" VerticalAlignment="Center" />
-                        <InfoBadge x:Name="infoBadge3" Style="{StaticResource AttentionValueInfoBadgeStyle}" Value="2" VerticalAlignment="Center" />
+                        <InfoBadge x:Name="ContactsBadge" Style="{StaticResource AttentionValueInfoBadgeStyle}" Value="2" VerticalAlignment="Center" />
                     </StackPanel>
 
                 </PivotItem.Header>
@@ -122,36 +162,78 @@
                             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                             BorderThickness="1"/>
 
-                        <ListView Grid.Row="1"  Margin="0">
-                            <ListViewItem Content="Contact 1" />
-                            <ListViewItem Content="Contact 2" />
-                            <ListViewItem Content="Contact 3" />
+                        <ListView
+                            Grid.Row="1"
+                            x:Name="RequestsContactsListView"
+                            ItemsSource="{x:Bind ViewModel.RequestContacts, Mode=OneWay}"
+                            Margin="-20,10,-20,0"
+                            SelectionMode="None"
+                            MinHeight="100">
+                            
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ContactsItemViewModel">
+                                    <Grid Padding="8" Height="64">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Ellipse Width="48" Height="48">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{x:Bind FullName}" FontSize="12"
+                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                            Width="42" Height="42"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            ToolTipService.ToolTip="Delete contact"
+                                            Click="OnDeleteContactClick">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                Text="&#xE74D;" 
+                                                FontSize="16"
+                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </Grid>
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                         <TextBlock 
-        FontFamily="Segoe MDL2 Assets"
-        FontSize="40"
-        Text="&#xE8FA;" 
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="40"
+                            Text="&#xE8FA;" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
 
-    <TextBlock Text="Incoming"
-               TextWrapping="Wrap"
-               FontSize="25"
-               TextAlignment="Center"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"/>
+                        <TextBlock Text="Incoming"
+                            TextWrapping="Wrap"
+                            FontSize="25"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
 
-    <TextBlock Text="Requests from other users to add you to their contacts"
-               TextWrapping="Wrap"
-               FontSize="15"
-               TextAlignment="Center"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"/>
-</StackPanel>
-
+                        <TextBlock Text="Requests from other users to add you to their contacts"
+                            TextWrapping="Wrap"
+                            FontSize="15"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
             </PivotItem>
 
@@ -184,10 +266,52 @@
                             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                             BorderThickness="1"/>
 
-                        <ListView Grid.Row="1"  Margin="0">
-                            <ListViewItem Content="Contact 1" />
-                            <ListViewItem Content="Contact 2" />
-                            <ListViewItem Content="Contact 3" />
+                        <ListView
+                            Grid.Row="1"
+                            x:Name="PendingContactsListView"
+                            ItemsSource="{x:Bind ViewModel.PendingContacts, Mode=OneWay}"
+                            Margin="-20,10,-20,0"
+                            SelectionMode="None"
+                            MinHeight="100">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ContactsItemViewModel">
+                                    <Grid Padding="8" Height="64">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Ellipse Width="48" Height="48">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{x:Bind FullName}" FontSize="12"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                            Width="42" Height="42"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            ToolTipService.ToolTip="Delete contact"
+                                            Click="OnDeleteContactClick">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                Text="&#xE74D;" 
+                                                FontSize="16"
+                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </Grid>
                     
@@ -245,35 +369,77 @@
                             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                             BorderThickness="1"/>
 
-                        <ListView Grid.Row="1"  Margin="0">
-                            <ListViewItem Content="Contact 1" />
-                            <ListViewItem Content="Contact 2" />
-                            <ListViewItem Content="Contact 3" />
+                        <ListView
+                            Grid.Row="1"
+                            x:Name="BlockedContactsListView"
+                            ItemsSource="{x:Bind ViewModel.BlockedContacts, Mode=OneWay}"
+                            Margin="-20,10,-20,0"
+                            SelectionMode="None"
+                            MinHeight="100">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ContactsItemViewModel">
+                                    <Grid Padding="8" Height="64">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Ellipse Width="48" Height="48">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{x:Bind FullName}" FontSize="12"
+                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="2"
+                                            Width="42" Height="42"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            ToolTipService.ToolTip="Delete contact"
+                                            Click="OnDeleteContactClick">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                Text="&#xE74D;" 
+                                                FontSize="16"
+                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </Grid>
 
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                         <TextBlock 
-        FontFamily="Segoe MDL2 Assets"
-        FontSize="40"
-        Text="&#xE8F8;" 
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="40"
+                            Text="&#xE8F8;" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
 
                         <TextBlock Text="Blacklist"
-        TextWrapping="Wrap"
-        FontSize="25"
-        TextAlignment="Center"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"/>
+                            TextWrapping="Wrap"
+                            FontSize="25"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
 
                         <TextBlock Text="These users will not know that he is on the blacklist and you will not receive messages from them"
-        TextWrapping="Wrap"
-        FontSize="15"
-        TextAlignment="Center"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"/>
+                            TextWrapping="Wrap"
+                            FontSize="15"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </PivotItem>

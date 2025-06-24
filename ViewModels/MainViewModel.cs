@@ -1,8 +1,7 @@
 ﻿using Arqanum.Services;
 using ArqanumCore.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Dispatching;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,29 +11,56 @@ namespace Arqanum.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {
         private ThemeService _themeService;
-
         private AccountService _accountService;
+        private ContactService _contactService;
+        public event EventHandler<int>? RequestContactsCountChanged;
+
+        private readonly DispatcherQueue _dispatcher;
 
         public MainViewModel()
         {
+            _dispatcher = DispatcherQueue.GetForCurrentThread() ?? throw new InvalidOperationException("DispatcherQueue required");
+
             _themeService = App.Services.GetRequiredService<ThemeService>();
+            _contactService = App.Services.GetRequiredService<ContactService>();
+            _accountService = App.Services.GetRequiredService<AccountService>();
 
             _themeService.ThemeChanged += theme => ThemeChanged?.Invoke(theme);
-
-            _accountService = App.Services.GetRequiredService<AccountService>();
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
 
             ThemeChanged?.Invoke(_themeService.CurrentTheme);
 
             if (_accountService.CurrentAccount is INotifyPropertyChanged npc)
-            {
                 npc.PropertyChanged += OnAccountPropertyChanged;
-            }
+
+            _contactService.RequestContactsCountChanged += (s, count) =>
+            {
+                dispatcher.TryEnqueue(() => RequestContactsCount = count);
+            };
+
+            RequestContactsCount = _contactService.RequestContactsCount;
+
             AccountAvatarUrl = _accountService.CurrentAccount.AvatarUrl;
         }
 
-        #region Avatar
+
+        #region Binding properties
 
         private string? _accountAvatarUrl;
+        private int _requestContactsCount;
+
+        public int RequestContactsCount
+        {
+            get => _requestContactsCount;
+            set
+            {
+                if (_requestContactsCount != value)
+                {
+                    _requestContactsCount = value;
+                    RequestContactsCountChanged?.Invoke(this, value);
+                }
+            }
+        }
 
         public string? AccountAvatarUrl
         {
@@ -55,8 +81,18 @@ namespace Arqanum.ViewModels
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (_dispatcher.HasThreadAccess)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            else
+            {
+                _dispatcher.TryEnqueue(() =>
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName))
+                );
+            }
         }
+
 
         private void OnAccountPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -65,16 +101,28 @@ namespace Arqanum.ViewModels
                 AccountAvatarUrl = _accountService.CurrentAccount.AvatarUrl;
             }
         }
+
+        //private void OnContactsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == "RequestContactsCount")
+        //    {
+        //        var value = _contactService.ContactsViewModel.RequestContactsCount;
+        //        _dispatcher.TryEnqueue(() =>
+        //        {
+        //            RequestContactsCount = value;
+        //            ContactsBadgeVisible = value > 0;
+        //        });
+        //    }
+        //}
+
+
         #region Navigation
 
         private object? _lastSelectedItem;
-
         private object? _selectedItem;
 
         public event Action? ShowUserProfileRequested;
-
         public event Action<Type>? NavigateRequested;
-
         public event Action<string, object?>? NavigateWithParamRequested;
 
         public object? SelectedItem
@@ -94,7 +142,7 @@ namespace Arqanum.ViewModels
 
         private void OnSelectedItemChanged()
         {
-            if (_selectedItem is NavigationViewItem selectedItem)
+            if (_selectedItem is Microsoft.UI.Xaml.Controls.NavigationViewItem selectedItem)
             {
                 var tag = selectedItem.Tag?.ToString();
 
@@ -130,9 +178,9 @@ namespace Arqanum.ViewModels
 
         #region Themes
 
-        public event Action<ElementTheme>? ThemeChanged;
+        public event Action<Microsoft.UI.Xaml.ElementTheme>? ThemeChanged;
 
-        public ElementTheme GetCurrentTheme() => _themeService.CurrentTheme;
+        public Microsoft.UI.Xaml.ElementTheme GetCurrentTheme() => _themeService.CurrentTheme;
 
         private void ToggleTheme()
         {

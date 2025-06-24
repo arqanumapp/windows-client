@@ -3,6 +3,7 @@ using Arqanum.Services;
 using Arqanum.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -14,6 +15,7 @@ namespace Arqanum.Pages
     public sealed partial class MainPage : Page
     {
         private MainViewModel ViewModel { get; } = new MainViewModel();
+        private readonly DispatcherQueue _dispatcher = DispatcherQueue.GetForCurrentThread();
 
         public MainPage()
         {
@@ -30,7 +32,17 @@ namespace Arqanum.Pages
 
             ViewModel.ThemeChanged += ApplyTheme;
 
-            Loaded += async (s, e) =>
+            ViewModel.RequestContactsCountChanged += (s, count) =>
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    UpdateContactsBadge(count);
+                });
+            };
+
+            UpdateContactsBadge(ViewModel.RequestContactsCount);
+
+            Loaded += (s, e) =>
             {
                 ApplyTheme(ViewModel.GetCurrentTheme());
 
@@ -43,6 +55,32 @@ namespace Arqanum.Pages
                     }
                 }
             };
+        }
+        private InfoBadge? GetContactsBadge()
+        {
+            foreach (var item in SideNavigation.MenuItems)
+            {
+                if (item is NavigationViewItem navItem && navItem.Tag?.ToString() == "Contacts")
+                {
+                    return navItem.InfoBadge as InfoBadge;
+                }
+            }
+            return null;
+        }
+
+        private void UpdateContactsBadge(int count)
+        {
+            var badge = GetContactsBadge();
+            if (badge != null)
+            {
+                _dispatcher.TryEnqueue(() =>
+                {
+                    badge.Value = count;
+                    badge.Visibility = ViewModel.RequestContactsCount > 0
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                });
+            }
         }
 
 

@@ -64,7 +64,6 @@ namespace Arqanum
                 services.AddTransient<CaptchaWindow>();
 
                 services.AddSingleton<MainWindow>();
-
             })
             .Build();
 
@@ -76,6 +75,7 @@ namespace Arqanum
             Window = mainWindow;
 
             Window.Closed += OnWindowClosed;
+            Window.ExtendsContentIntoTitleBar = true;
 
             Window.Activate();
 

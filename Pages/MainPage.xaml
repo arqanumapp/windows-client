@@ -22,12 +22,12 @@
 
                 <NavigationViewItem Icon="Message" AnimatedIcon.State="Start" Content="Chats" Tag="Chat">
                     <NavigationViewItem.InfoBadge>
-                        <InfoBadge x:Name="ChatBadge" Value="44" />
+                        <InfoBadge x:Name="ChatBadge" Visibility="Collapsed"/>
                     </NavigationViewItem.InfoBadge>
                 </NavigationViewItem>
                 <NavigationViewItem Icon="People" Content="Contacts" Tag="Contacts">
                     <NavigationViewItem.InfoBadge>
-                        <InfoBadge x:Name="ContactsBadge" Value="2" />
+                        <InfoBadge x:Name="ContactsBadge" />
                     </NavigationViewItem.InfoBadge>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

@@ -32,93 +32,93 @@
             </Button>
         </Grid>
 
-        <StackPanel Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Width="300"
-                    Spacing="15">
+        <Border Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="12"
+            Padding="30"
+            Width="360">
+            <StackPanel Spacing="15">
 
-            <TextBlock Text="Create Account"
+                <TextBlock Text="Create account"
                        FontSize="28"
-                       FontWeight="Bold"
+                       FontWeight="Normal"
                        Foreground="{ThemeResource TextControlForeground}"
                        TextAlignment="Center"
                        HorizontalAlignment="Center" />
-            
-            <Grid ColumnDefinitions="*,Auto" Height="40">
-                
-                <TextBox x:Name="UsernameTextBox"
-                    PlaceholderText="Username"
-                    Grid.Column="0"
-                    Margin="0,0,10,0"
-                    Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    MaxLength="32"
-                    Background="{ThemeResource TextControlBackground}"
-                    Foreground="{ThemeResource TextControlForeground}" />
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="CheckButton"
-                        Content="Check"
-                        Command="{Binding CheckUsernameCommand}"
-                        Visibility="{Binding IsCheckButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Background="{ThemeResource ButtonBackground}"
-                        Foreground="{ThemeResource ButtonForeground}" />
+                <Grid ColumnDefinitions="*,Auto" Height="40">
+                    <TextBox x:Name="UsernameTextBox"
+                         PlaceholderText="Username"
+                         Grid.Column="0"
+                         Margin="0,0,10,0"
+                         Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="32"
+                         Background="{ThemeResource TextControlBackground}"
+                         Foreground="{ThemeResource TextControlForeground}" />
 
-                    <ProgressRing Width="20"
-                        Height="20"
-                        IsActive="True"
-                        Visibility="{Binding IsSpinnerVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="CheckButton"
+                            Content="Check"
+                            Command="{Binding CheckUsernameCommand}"
+                            Visibility="{Binding IsCheckButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                            Background="{ThemeResource ButtonBackground}"
+                            Foreground="{ThemeResource ButtonForeground}" />
 
-                    <FontIcon Glyph="&#xE001;" 
-                        FontSize="18"
-                        Foreground="Green"
-                        Visibility="{Binding IsSuccessIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <ProgressRing Width="20"
+                                  Height="20"
+                                  IsActive="True"
+                                  Visibility="{Binding IsSpinnerVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                    <FontIcon Glyph="&#xE10A;"
-                        FontSize="18"
-                        Foreground="Red"
-                        Visibility="{Binding IsFailureIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </StackPanel>
+                        <FontIcon Glyph="&#xE001;"
+                              FontSize="18"
+                              Foreground="Green"
+                              Visibility="{Binding IsSuccessIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-            </Grid>
+                        <FontIcon Glyph="&#xE10A;"
+                              FontSize="18"
+                              Foreground="Red"
+                              Visibility="{Binding IsFailureIconVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
 
-
-            <TextBlock Text="Only Latin letters and digits, max 32 characters"
+                <TextBlock Text="Only Latin letters and digits, max 32 characters"
                        FontSize="10"
                        Foreground="{ThemeResource SystemAccentColor}"
                        TextWrapping="WrapWholeWords" />
 
-            <TextBox PlaceholderText="First name (optional)"
+                <TextBox PlaceholderText="First name (optional)"
                      Height="40"
                      Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="32"
                      Background="{ThemeResource TextControlBackground}"
                      Foreground="{ThemeResource TextControlForeground}" />
 
-            <TextBox PlaceholderText="Last name (optional)"
+                <TextBox PlaceholderText="Last name (optional)"
                      Height="40"
                      Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="32"
                      Background="{ThemeResource TextControlBackground}"
                      Foreground="{ThemeResource TextControlForeground}" />
 
-            <Button Content="Continue"
-                Height="40"
-                HorizontalAlignment="Stretch"
-                Command="{Binding ContinueCommand}"
-                IsEnabled="{Binding CanContinue}"
-                Background="{ThemeResource SystemControlHighlightAccentBrush}"
-                Foreground="{ThemeResource ButtonForeground}" />
+                <Button Content="Continue"
+                    Height="40"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ContinueCommand}"
+                    IsEnabled="{Binding CanContinue}"
+                    Background="{ThemeResource SystemControlHighlightAccentBrush}"
+                    Foreground="{ThemeResource ButtonForeground}" />
 
-            <TextBlock Text="{Binding StatusMessage}"
-                Margin="0,8,0,0"
-                Foreground="{ThemeResource SystemAccentColor}"
-                FontSize="14"
-                HorizontalAlignment="Left"
-                MaxWidth="300"
-                TextTrimming="CharacterEllipsis"
-                TextWrapping="NoWrap" />
-
-        </StackPanel>
+                <TextBlock Text="{Binding StatusMessage}"
+                       Margin="0,8,0,0"
+                       Foreground="{ThemeResource SystemAccentColor}"
+                       FontSize="14"
+                       HorizontalAlignment="Left"
+                       MaxWidth="300"
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="NoWrap" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -66,7 +65,7 @@ public sealed partial class UserProfileDialog : UserControl
     {
         if (DataContext is not UserProfileViewModel vm)
             return;
-        
+
         var result = await vm.UpdateUsernameAsync(UsernameTextBox.Text);
         if (result)
         {

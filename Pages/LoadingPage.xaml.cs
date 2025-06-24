@@ -1,12 +1,11 @@
-using Arqanum.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+
 
 namespace Arqanum.Pages
 {
-    public sealed partial class SettingsPage : Page
+    public sealed partial class LoadingPage : Page
     {
-
-        public SettingsPage()
+        public LoadingPage()
         {
             InitializeComponent();
         }

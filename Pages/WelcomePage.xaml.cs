@@ -1,6 +1,8 @@
 using Arqanum.CoreImplementations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
+using Windows.System;
 
 namespace Arqanum.Pages
 {
@@ -19,6 +21,12 @@ namespace Arqanum.Pages
         {
             var captchaProvider = new CaptchaProvider();
             string ss = await captchaProvider.GetCaptchaTokenAsync();
+        }
+
+        private async void OnGitHubClick(object sender, RoutedEventArgs e)
+        {
+            var uri = new Uri("https://github.com/arqanumapp");
+            await Launcher.LaunchUriAsync(uri);
         }
     }
 }

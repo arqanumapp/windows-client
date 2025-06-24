@@ -11,15 +11,24 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
+	  <WindowsPackageType>MSIX</WindowsPackageType>
+	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	  <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+	  <PackageCertificateThumbprint>803A5AC948F3E7E5334C2EC405851D1D30BB908B</PackageCertificateThumbprint>
+	  <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+	  <AppxPackageDir>C:\Users\User\Desktop\</AppxPackageDir>
+	  <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
+	  <AppxBundle>Never</AppxBundle>
+	  <HoursBetweenUpdateChecks>24</HoursBetweenUpdateChecks>
   </PropertyGroup>
 	
-  <ItemGroup>
-    <Content Include="Assets\Images\welcome-image.png" />
-  </ItemGroup>
+
   <ItemGroup>
     <None Remove="Assets\emojis.json" />
+    <None Remove="Assets\Images\github-mark-white.png" />
     <None Remove="Assets\Images\logo.png" />
-    <None Remove="Assets\Images\welcome-image.png" />
     <None Remove="Assets\tray.ico" />
     <None Remove="Controls\AddContactDialog.xaml" />
     <None Remove="Controls\EmojiPanel.xaml" />
@@ -28,6 +37,7 @@
     <None Remove="Pages\ContactsPage.xaml" />
     <None Remove="Pages\CreateAccountPage.xaml" />
     <None Remove="Pages\DefaultChatPage.xaml" />
+    <None Remove="Pages\LoadingPage.xaml" />
     <None Remove="Pages\MainPage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
     <None Remove="Windows\CaptchaWindow.xaml" />
@@ -74,6 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Images\welcome-image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\LoadingPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\EmojiPanel.xaml">
@@ -131,15 +146,10 @@
     Explorer "Package and Publish" context menu entry to be enabled for this project even if
     the Windows App SDK Nuget package has not yet been restored.
   -->
+	
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
 
-  <!-- Publish Properties -->
-  <PropertyGroup>
-    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
-  </PropertyGroup>
+ 
 </Project>

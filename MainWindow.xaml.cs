@@ -26,8 +26,9 @@ namespace Arqanum
     public sealed partial class MainWindow : Window
     {
         private readonly AccountService _accountService;
+        private readonly ContactService _contactService;
 
-        public MainWindow(AccountService accountService)
+        public MainWindow(AccountService accountService, ContactService contactService)
         {
             InitializeComponent();
 
@@ -39,6 +40,8 @@ namespace Arqanum
 
             _accountService = accountService;
 
+            _contactService = contactService;
+
             this.Activated += MainWindow_Activated;
 
             ImagePreviewService.Initialize(this);
@@ -48,21 +51,22 @@ namespace Arqanum
             this.SizeChanged += MainWindow_SizeChanged;
 
             RootGrid.LayoutUpdated += RootGrid_LayoutUpdated;
-
-
         }
-        
-       
+
+
         private async void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (!_isLoaded)
             {
                 _isLoaded = true;
 
+                MainFrame.Navigate(typeof(LoadingPage), null, new DrillInNavigationTransitionInfo());
+
                 var accountExist = await _accountService.AccountExist();
 
                 if (accountExist)
                 {
+                    await _contactService.LoadContactsAsync();
                     MainFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
                 }
                 else
@@ -294,6 +298,7 @@ namespace Arqanum
 
         [DllImport("user32.dll", EntryPoint = "CallWindowProcW")]
         private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
         #endregion
     }
 }

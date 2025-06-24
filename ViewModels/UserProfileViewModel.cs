@@ -1,13 +1,9 @@
-﻿using Arqanum.Utilities;
-using ArqanumCore.Services;
+﻿using ArqanumCore.Services;
 using ArqanumCore.ViewModels.Account;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Arqanum.ViewModels;
 
@@ -39,6 +35,7 @@ public class UserProfileViewModel : INotifyPropertyChanged
             return false;
         }
     }
+
     #region Binding properties
 
     public AccountViewModel? CurrentAccount
@@ -97,7 +94,5 @@ public class UserProfileViewModel : INotifyPropertyChanged
     public async Task<bool> UpdateAvatarAsync(byte[] imageData, string format) => await _accountService.UpdateAvatarAsync(imageData, format);
 
     #endregion
-
-
 }
 
