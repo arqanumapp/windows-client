@@ -72,11 +72,9 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <Ellipse Width="48" Height="48">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
+                                            <Border Width="48" Height="48" CornerRadius="24">
+                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                            </Border>
                                         </Grid>
 
                                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
@@ -180,11 +178,9 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <Ellipse Width="48" Height="48">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
+                                            <Border Width="48" Height="48" CornerRadius="24">
+                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                            </Border>
                                         </Grid>
 
                                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
@@ -283,12 +279,12 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <Ellipse Width="48" Height="48">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
+                                            <Border Width="48" Height="48" CornerRadius="24">
+                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                            </Border>
                                         </Grid>
+
+
 
                                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                                             <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
@@ -386,11 +382,9 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <Ellipse Width="48" Height="48">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush ImageSource="{x:Bind AvatarUrl}" Stretch="UniformToFill"/>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
+                                            <Border Width="48" Height="48" CornerRadius="24">
+                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                            </Border>
                                         </Grid>
 
                                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">

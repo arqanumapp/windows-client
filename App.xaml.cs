@@ -5,12 +5,13 @@ using Arqanum.ViewModels;
 using Arqanum.Windows;
 using ArqanumCore;
 using ArqanumCore.Interfaces;
+using ArqanumCore.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System;
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Arqanum
 {
@@ -51,6 +52,10 @@ namespace Arqanum
 
                 services.AddTransient<IShowNotyficationService, ShowNotyficationService>();
 
+                services.AddTransient<IFileCacheService, FileCacheService>();
+
+                services.AddHttpClient<FileCacheService>();
+
                 services.AddArqanumCore();
 
                 services.AddSingleton<ThemeService>();
@@ -64,6 +69,7 @@ namespace Arqanum
                 services.AddTransient<CaptchaWindow>();
 
                 services.AddSingleton<MainWindow>();
+
             })
             .Build();
 
