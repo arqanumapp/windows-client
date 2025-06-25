@@ -17,7 +17,6 @@
                IsLightDismissEnabled="False">
 
             <Grid Background="#CC000000" x:Name="ImagePreviewPopupRoot">
-                
                 <ScrollView ContentOrientation="None"
                     ZoomMode="Enabled" 
                     IsTabStop="True"
@@ -30,7 +29,8 @@
                     <Image x:Name="PopupImage" Stretch="Uniform"/>
                    
                 </ScrollView>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" Spacing="8">
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16,30,16,0" Spacing="8">
                     <Button Width="40" Height="40"
                         Click="SaveImageButton_Click"
                         Background="#66000000"

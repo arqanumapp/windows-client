@@ -181,8 +181,10 @@ namespace Arqanum
             WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hwnd);
 
             savePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
             savePicker.FileTypeChoices.Add("PNG Image", new[] { ".png" });
-            savePicker.SuggestedFileName = "image";
+
+            savePicker.SuggestedFileName = "arqanum_" + Guid.NewGuid().ToString("N");
 
             var file = await savePicker.PickSaveFileAsync();
             if (file == null)

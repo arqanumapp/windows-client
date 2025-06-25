@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 public class ContactsPageViewModel : INotifyPropertyChanged
 {
@@ -38,6 +39,7 @@ public class ContactsPageViewModel : INotifyPropertyChanged
     public ContactsPageViewModel()
     {
         _contactService = App.Services.GetRequiredService<ContactService>();
+
         var dispatcher = DispatcherQueue.GetForCurrentThread();
 
         ConfirmedContacts = new DispatcherObservableCollection<ContactsItemViewModel>(dispatcher);
@@ -45,7 +47,6 @@ public class ContactsPageViewModel : INotifyPropertyChanged
         RequestContacts = new DispatcherObservableCollection<ContactsItemViewModel>(dispatcher);
         BlockedContacts = new DispatcherObservableCollection<ContactsItemViewModel>(dispatcher);
 
-        // Копируем стартовые значения
         foreach (var item in _contactService.ConfirmedContacts)
             ConfirmedContacts.Add(item);
         foreach (var item in _contactService.PendingContacts)
@@ -57,65 +58,144 @@ public class ContactsPageViewModel : INotifyPropertyChanged
 
         RequestContactsCount = _contactService.RequestContactsCount;
 
-        // Подписка на обновление количества заявок
         _contactService.RequestContactsCountChanged += (s, count) =>
         {
             dispatcher.TryEnqueue(() => RequestContactsCount = count);
         };
 
-        // Подписки на CollectionChanged
         _contactService.ConfirmedContacts.CollectionChanged += (s, e) =>
         {
-            dispatcher.TryEnqueue(() =>
-            {
-                if (e.NewItems != null)
-                    foreach (ContactsItemViewModel item in e.NewItems)
-                        ConfirmedContacts.Add(item);
-                if (e.OldItems != null)
-                    foreach (ContactsItemViewModel item in e.OldItems)
-                        ConfirmedContacts.Remove(item);
-            });
+            dispatcher.TryEnqueue(() => SyncConfirmedContacts());
         };
 
         _contactService.PendingContacts.CollectionChanged += (s, e) =>
         {
-            dispatcher.TryEnqueue(() =>
-            {
-                if (e.NewItems != null)
-                    foreach (ContactsItemViewModel item in e.NewItems)
-                        PendingContacts.Add(item);
-                if (e.OldItems != null)
-                    foreach (ContactsItemViewModel item in e.OldItems)
-                        PendingContacts.Remove(item);
-            });
+            dispatcher.TryEnqueue(() => SyncPendingContacts());
         };
 
         _contactService.RequestContacts.CollectionChanged += (s, e) =>
         {
-            dispatcher.TryEnqueue(() =>
-            {
-                if (e.NewItems != null)
-                    foreach (ContactsItemViewModel item in e.NewItems)
-                        RequestContacts.Add(item);
-                if (e.OldItems != null)
-                    foreach (ContactsItemViewModel item in e.OldItems)
-                        RequestContacts.Remove(item);
-            });
+            dispatcher.TryEnqueue(() => SyncRequestContacts());
         };
 
         _contactService.BlockedContacts.CollectionChanged += (s, e) =>
         {
-            dispatcher.TryEnqueue(() =>
-            {
-                if (e.NewItems != null)
-                    foreach (ContactsItemViewModel item in e.NewItems)
-                        BlockedContacts.Add(item);
-                if (e.OldItems != null)
-                    foreach (ContactsItemViewModel item in e.OldItems)
-                        BlockedContacts.Remove(item);
-            });
+            dispatcher.TryEnqueue(() => SyncBlockedContacts());
         };
     }
+
+    public async Task RefreshFilteredRequestsAsync()
+    {
+        await Task.Run(() =>
+        {
+            _contactService.ApplyRequestFilter(string.Empty);
+            _contactService.ApplyBlockedFilter(string.Empty);
+            _contactService.ApplyConfirmedFilter(string.Empty);
+            _contactService.ApplyRequestFilter(string.Empty);
+        });
+    }
+
+    #region Request Contacts
+
+    public async Task AcceptContactRequestAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return;
+        await _contactService.ConfirmContactAsync(contact);
+    }
+
+    public async Task RejectContactRequestAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return;
+        await _contactService.RejectContactAsync(contact);
+    }
+
+    public async Task RejectAndBlockContactRequestAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return;
+        await _contactService.RejectAndBlockContactRequestAsync(contact);
+    }
+
+    #endregion
+
+    #region Confirmed Contacts
+
+    public async Task<bool> DeleteContactAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return false;
+        return await _contactService.DeleteContactAsync(contact);
+    }
+
+    public async Task DeleteAndBlockContactAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return;
+        await _contactService.DeleteContactAsync(contact);
+        await _contactService.BlockContactAsync(contact);
+    }
+
+    #endregion 
+
+    #region Blocked Contacts
+
+    public async Task UnblockContactAsync(ContactsItemViewModel contact)
+    {
+        if (contact == null) return;
+        await _contactService.UnblockContactAsync(contact);
+    }
+
+    #endregion
+    #region Sync Methods
+
+    private void SyncConfirmedContacts()
+    {
+        ConfirmedContacts.Clear();
+        foreach (var item in _contactService.ConfirmedContacts)
+            ConfirmedContacts.Add(item);
+    }
+
+    private void SyncRequestContacts()
+    {
+        RequestContacts.Clear();
+        foreach (var item in _contactService.RequestContacts)
+            RequestContacts.Add(item);
+    }
+
+    private void SyncBlockedContacts()
+    {
+        BlockedContacts.Clear();
+        foreach (var item in _contactService.BlockedContacts)
+            BlockedContacts.Add(item);
+    }
+
+    private void SyncPendingContacts()
+    {
+        PendingContacts.Clear();
+        foreach (var item in _contactService.PendingContacts)
+            PendingContacts.Add(item);
+    }
+
+    #endregion
+
+    #region Filter Methods
+
+    public void ApplyPendingFilter(string query)
+    {
+        _contactService.ApplyPendingFilter(query);
+    }
+    public void ApplyConfirmedFilter(string query)
+    {
+        _contactService.ApplyConfirmedFilter(query);
+    }
+    public void ApplyRequestFilter(string query)
+    {
+        _contactService.ApplyRequestFilter(query);
+    }
+
+    public void ApplyBlockedFilter(string query)
+    {
+        _contactService.ApplyBlockedFilter(query);
+    }
+
+    #endregion
 
     private void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

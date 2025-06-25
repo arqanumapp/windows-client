@@ -69,7 +69,6 @@ namespace Arqanum
                 services.AddTransient<CaptchaWindow>();
 
                 services.AddSingleton<MainWindow>();
-
             })
             .Build();
 

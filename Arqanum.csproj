@@ -16,12 +16,13 @@
 	  <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
 	  <PackageCertificateThumbprint>803A5AC948F3E7E5334C2EC405851D1D30BB908B</PackageCertificateThumbprint>
 	  <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+	  <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
 	  <AppxPackageDir>C:\Users\User\Desktop\</AppxPackageDir>
 	  <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
 	  <AppxBundle>Never</AppxBundle>
 	  <HoursBetweenUpdateChecks>24</HoursBetweenUpdateChecks>
+	  <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
 	
 

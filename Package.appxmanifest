@@ -8,15 +8,15 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="c022ea60-4250-4f18-9460-107715e7303e"
-    Publisher="CN=User"
-    Version="1.0.0.0" />
+    Name="Arqanum.Arqanum"
+    Publisher="CN=81E36E32-2946-4E5B-8428-9F4D3ADA6DE7"
+    Version="1.0.3.0" />
 
-  <mp:PhoneIdentity PhoneProductId="c022ea60-4250-4f18-9460-107715e7303e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="64a3c276-fb58-4df0-8ac6-41fd017b1d29" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Arqanum</DisplayName>
-    <PublisherDisplayName>User</PublisherDisplayName>
+    <PublisherDisplayName>Arqanum</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

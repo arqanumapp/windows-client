@@ -48,7 +48,7 @@
                             Grid.Row="0"
                             Margin="5,10,5,10"
                             PlaceholderText="Search..."
-                            QueryIcon="Find"
+                            TextChanged="ContactsSearchBox_TextChanged"
                             AutomationProperties.Name="ContactsSearch"
                             Background="{ThemeResource TextControlBackground}"
                             Foreground="{ThemeResource TextControlForeground}"
@@ -73,7 +73,7 @@
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <Border Width="48" Height="48" CornerRadius="24">
-                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                                <Image Tapped="Avatar_Tapped" Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
                                             </Border>
                                         </Grid>
 
@@ -87,14 +87,31 @@
                                             Width="42" Height="42"
                                             Background="Transparent"
                                             BorderThickness="0"
-                                            ToolTipService.ToolTip="Delete contact"
-                                            Click="OnDeleteContactClick">
+                                            ToolTipService.ToolTip="Actions">
                                             <TextBlock FontFamily="Segoe MDL2 Assets"
-                                                Text="&#xE74D;" 
+                                                Text="&#xE712;" 
                                                 FontSize="16"
-                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Chat"
+                                                        Click="OnOpenChatClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE8BD;" FontFamily="Segoe MDL2 Assets"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+
+                                                    <MenuFlyoutItem Text="Delete"
+                                                        Click="OnDeleteConfirmedContactClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE74D;" Foreground="Red" FontFamily="Segoe MDL2 Assets"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+
                                         </Button>
                                     </Grid>
                                 </DataTemplate>
@@ -112,18 +129,18 @@
                             Foreground="{ThemeResource SystemControlHighlightAccentBrush}" />
 
                         <TextBlock Text="Contacts"
-                       TextWrapping="Wrap"
-                       FontSize="25"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                            TextWrapping="Wrap"
+                            FontSize="25"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
 
                         <TextBlock Text="List of all your contacts"
-                       TextWrapping="Wrap"
-                       FontSize="15"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+                            TextWrapping="Wrap"
+                            FontSize="15"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </PivotItem>
@@ -153,7 +170,7 @@
                             Grid.Row="0"
                             Margin="5,10,5,10"
                             PlaceholderText="Search..."
-                            QueryIcon="Find"
+                            TextChanged="IncomingSearchBox_TextChanged"
                             AutomationProperties.Name="IncomingSearch"
                             Background="{ThemeResource TextControlBackground}"
                             Foreground="{ThemeResource TextControlForeground}"
@@ -179,7 +196,7 @@
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <Border Width="48" Height="48" CornerRadius="24">
-                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                                <Image Tapped="Avatar_Tapped" Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
                                             </Border>
                                         </Grid>
 
@@ -193,14 +210,27 @@
                                             Width="42" Height="42"
                                             Background="Transparent"
                                             BorderThickness="0"
-                                            ToolTipService.ToolTip="Delete contact"
-                                            Click="OnDeleteContactClick">
+                                            ToolTipService.ToolTip="Actions">
                                             <TextBlock FontFamily="Segoe MDL2 Assets"
-                                                Text="&#xE74D;" 
+                                                Text="&#xE712;" 
                                                 FontSize="16"
-                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Accept"
+                                                        Icon="Accept"
+                                                        Click="OnAcceptRequestClick"/>
+                                                    <MenuFlyoutItem Text="Reject"
+                                                        Click="OnRejectRequestClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE711;" Foreground="Red" FontFamily="Segoe MDL2 Assets"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+
+                                                </MenuFlyout>
+                                            </Button.Flyout>
                                         </Button>
                                     </Grid>
                                 </DataTemplate>
@@ -255,7 +285,7 @@
                             Grid.Row="0"
                             Margin="5,10,5,10"
                             PlaceholderText="Search..."
-                            QueryIcon="Find"
+                            TextChanged="OutgoingSearchBox_TextChanged"
                             AutomationProperties.Name="OutgoingSearch"
                             Background="{ThemeResource TextControlBackground}"
                             Foreground="{ThemeResource TextControlForeground}"
@@ -280,11 +310,9 @@
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <Border Width="48" Height="48" CornerRadius="24">
-                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                                <Image ToolTipService.ToolTip="Show" Tapped="Avatar_Tapped" Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
                                             </Border>
                                         </Grid>
-
-
 
                                         <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                                             <TextBlock Text="{x:Bind Username}" FontWeight="Bold" FontSize="14"/>
@@ -296,12 +324,12 @@
                                             Width="42" Height="42"
                                             Background="Transparent"
                                             BorderThickness="0"
-                                            ToolTipService.ToolTip="Delete contact"
-                                            Click="OnDeleteContactClick">
+                                            ToolTipService.ToolTip="Cancel"
+                                            Click="OnCancelPendingContactClick">
                                             <TextBlock FontFamily="Segoe MDL2 Assets"
-                                                Text="&#xE74D;" 
+                                                Text="&#xE711;" 
                                                 FontSize="16"
-                                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                Foreground="Coral"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"/>
                                         </Button>
@@ -358,7 +386,7 @@
                             Grid.Row="0"
                             Margin="5,10,5,10"
                             PlaceholderText="Search..."
-                            QueryIcon="Find"
+                            TextChanged="BlacklistSearchBox_TextChanged"
                             AutomationProperties.Name="BlacklistSearch"
                             Background="{ThemeResource TextControlBackground}"
                             Foreground="{ThemeResource TextControlForeground}"
@@ -383,7 +411,7 @@
 
                                         <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <Border Width="48" Height="48" CornerRadius="24">
-                                                <Image Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
+                                                <Image Tapped="Avatar_Tapped" Source="{Binding AvatarUrl}" Stretch="UniformToFill"/>
                                             </Border>
                                         </Grid>
 
@@ -398,7 +426,7 @@
                                             Background="Transparent"
                                             BorderThickness="0"
                                             ToolTipService.ToolTip="Delete contact"
-                                            Click="OnDeleteContactClick">
+                                            Click="OnUnblockContactClick">
                                             <TextBlock FontFamily="Segoe MDL2 Assets"
                                                 Text="&#xE74D;" 
                                                 FontSize="16"

@@ -137,6 +137,7 @@ public sealed partial class UserProfileDialog : UserControl
     {
         ImagePreviewService.Show(_viewModel.CurrentAccount.AvatarUrl);
     }
+
     private void AvatarGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         CameraButton.Visibility = Visibility.Visible;
@@ -173,6 +174,22 @@ public sealed partial class UserProfileDialog : UserControl
         if (string.IsNullOrWhiteSpace(format))
             return;
 
+        const long MaxFileSize = 2 * 1024 * 1024;
+        var properties = await file.GetBasicPropertiesAsync();
+        if (properties.Size > MaxFileSize)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "File Too Large",
+                Content = "The selected image must not exceed 2 MB.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot,
+                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style
+            };
+            await dialog.ShowAsync();
+            return;
+        }
+
         using var stream = await file.OpenStreamForReadAsync();
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
@@ -180,8 +197,6 @@ public sealed partial class UserProfileDialog : UserControl
 
         await _viewModel.UpdateAvatarAsync(bytes, format);
     }
-
-
 
     #endregion
 
